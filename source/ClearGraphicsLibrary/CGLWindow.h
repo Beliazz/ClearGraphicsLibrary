@@ -13,6 +13,12 @@ typedef CGL_API std::tr1::shared_ptr<CGLWindow> PCGLWindow;
 
 class CGL_API CGLWindow : public CGLBase<HWND__>
 {
+public:
+	CGLWindow(std::string className) : CGLBase(className) {}
+};
+
+class CGL_API CGLWindowFromConfig : public CGLWindow
+{
 private:
 	UINT m_width;
 	UINT m_height;
@@ -23,19 +29,42 @@ private:
 
 protected:
 	void getDependencies(std::vector<PCGLObject>* pDependencies )  { }
-
-
-public:	
-	CGLWindow(LPCWSTR title , 
-			  UINT width, 
-			  UINT height, 
-			  WNDPROC messageProc, 
-			  HINSTANCE instance = NULL, 
-			  LPCWSTR cursorName = IDC_ARROW );
-	~CGLWindow();
-
 	HRESULT onRestore();
 	void onReset();
+
+	CGLWindowFromConfig(LPCWSTR title , 
+		UINT width, 
+		UINT height, 
+		WNDPROC messageProc, 
+		HINSTANCE instance = NULL, 
+		LPCWSTR cursorName = IDC_ARROW );
+
+public:	
+	~CGLWindowFromConfig();
+
+	static PCGLWindow Create(LPCWSTR title , 
+		UINT width, 
+		UINT height, 
+		WNDPROC messageProc, 
+		HINSTANCE instance = NULL, 
+		LPCWSTR cursorName = IDC_ARROW );
+};
+
+class CGL_API CGLWindowFromExisting : public CGLWindow
+{
+private:
+	HWND m_window;
+
+protected:
+	void getDependencies(std::vector<PCGLObject>* pDependencies )  { }
+	HRESULT onRestore();
+	void onReset();
+
+	CGLWindowFromExisting(HWND window);
+
+public:
+	~CGLWindowFromExisting();
+	static PCGLWindow Create(HWND window);
 };
 
 

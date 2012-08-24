@@ -1,9 +1,10 @@
 #include "cgl.h"
 
 //////////////////////////////////////////////////////////////////////////
-// CGLWindow
-cgl::CGLWindow::CGLWindow( LPCWSTR title , UINT width, UINT height, WNDPROC messageProc, HINSTANCE instance /*= NULL*/, LPCWSTR cursorName /*= IDC_ARROW */ ) :
-	CGLBase("CGLWindow"),
+// CGLWindowFromConfig
+// 
+cgl::CGLWindowFromConfig::CGLWindowFromConfig( LPCWSTR title , UINT width, UINT height, WNDPROC messageProc, HINSTANCE instance /*= NULL*/, LPCWSTR cursorName /*= IDC_ARROW */ ) :
+	CGLWindow("CGLWindowFromConfig"),
 	m_width(width),
 	m_height(height),
 	m_title(title),
@@ -13,7 +14,7 @@ cgl::CGLWindow::CGLWindow( LPCWSTR title , UINT width, UINT height, WNDPROC mess
 {
 
 }
-HRESULT cgl::CGLWindow::onRestore( )
+HRESULT cgl::CGLWindowFromConfig::onRestore( )
 {
 	// create window class
 	WNDCLASSEX wcex;
@@ -63,7 +64,7 @@ HRESULT cgl::CGLWindow::onRestore( )
 
 	return S_OK;
 }
-void cgl::CGLWindow::onReset( )
+void cgl::CGLWindowFromConfig::onReset( )
 {
 	if (get())
 	{
@@ -72,9 +73,37 @@ void cgl::CGLWindow::onReset( )
 		set(NULL);
 	}
 }
-cgl::CGLWindow::~CGLWindow()
+cgl::PCGLWindow cgl::CGLWindowFromConfig::Create( LPCWSTR title , UINT width, UINT height, WNDPROC messageProc, HINSTANCE instance /*= NULL*/, LPCWSTR cursorName /*= IDC_ARROW */ )
+{
+	return PCGLWindow(new CGLWindowFromConfig(title, width, height, messageProc, instance, cursorName));
+}
+cgl::CGLWindowFromConfig::~CGLWindowFromConfig()
 {
 	onReset();
 }
 
+//////////////////////////////////////////////////////////////////////////
+// CGLWindowFromExisting
+// 
+cgl::CGLWindowFromExisting::CGLWindowFromExisting(HWND window)
+	: CGLWindow("CGLWindowFromExisting"), m_window(window)
+{
 
+}
+HRESULT cgl::CGLWindowFromExisting::onRestore()
+{
+	set(m_window);
+	return S_OK;
+}
+void cgl::CGLWindowFromExisting::onReset( )
+{
+	set(NULL);
+}
+cgl::PCGLWindow cgl::CGLWindowFromExisting::Create( HWND window )
+{
+	return PCGLWindow(new CGLWindowFromExisting(window));
+}
+cgl::CGLWindowFromExisting::~CGLWindowFromExisting()
+{
+	onReset();
+}
