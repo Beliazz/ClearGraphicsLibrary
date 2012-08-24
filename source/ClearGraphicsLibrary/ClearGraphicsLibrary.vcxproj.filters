@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Ressourcendateien">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{92cf0bb1-9d0e-48f2-af9d-53d1f26a085d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Helper Classes">
+      <UniqueIdentifier>{884b4350-f696-409e-a234-445e93c67077}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Base Classes">
+      <UniqueIdentifier>{82218b2d-3308-4def-9cc0-161134a3ce58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Diagrams">
+      <UniqueIdentifier>{2f4c887c-c75c-487c-8064-483e5c3f3667}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Interface Wrapper">
+      <UniqueIdentifier>{966cb7d6-5421-4b66-aef4-07c4a7ffe190}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="cgl.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="CGLManager.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="CGLWindow.h">
+      <Filter>Source\Helper Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="CGLLogger.h">
+      <Filter>Source\Helper Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="CGLObject.h">
+      <Filter>Source\Base Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="CGLBindCollection.h">
+      <Filter>Source\Helper Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="CGLInstancing.h">
+      <Filter>Source\Base Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="CGLDataProvider.h">
+      <Filter>Source\Base Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="CGLInputProcessor.h">
+      <Filter>Source\Helper Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="DXGIFactory.h">
+      <Filter>Source\Interface Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D11Buffer.h">
+      <Filter>Source\Interface Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D11Device.h">
+      <Filter>Source\Interface Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D11Effect.h">
+      <Filter>Source\Interface Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D11InputBuffer.h">
+      <Filter>Source\Interface Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D11InputLayout.h">
+      <Filter>Source\Interface Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D11Query.h">
+      <Filter>Source\Interface Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D11RenderStates.h">
+      <Filter>Source\Interface Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D11ResourceView.h">
+      <Filter>Source\Interface Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D11Texture.h">
+      <Filter>Source\Interface Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="CGLGameLoop.h">
+      <Filter>Source\Helper Classes</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="cgl.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="CGLManager.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="CGLWindow.cpp">
+      <Filter>Source\Helper Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="CGLLogger.cpp">
+      <Filter>Source\Helper Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="CGLObject.cpp">
+      <Filter>Source\Base Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="CGLBindCollection.cpp">
+      <Filter>Source\Helper Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="CGLInputProcessor.cpp">
+      <Filter>Source\Helper Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D11Buffer.cpp">
+      <Filter>Source\Interface Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D11Device.cpp">
+      <Filter>Source\Interface Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D11Effect.cpp">
+      <Filter>Source\Interface Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D11InputBuffer.cpp">
+      <Filter>Source\Interface Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D11InputLayout.cpp">
+      <Filter>Source\Interface Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D11Query.cpp">
+      <Filter>Source\Interface Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D11RenderStates.cpp">
+      <Filter>Source\Interface Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D11ResourceView.cpp">
+      <Filter>Source\Interface Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D11Texture.cpp">
+      <Filter>Source\Interface Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="DXGIFactory.cpp">
+      <Filter>Source\Interface Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="CGLGameLoop.cpp">
+      <Filter>Source\Helper Classes</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cgl.cd">
+      <Filter>Diagrams</Filter>
+    </None>
+  </ItemGroup>
+</Project>
