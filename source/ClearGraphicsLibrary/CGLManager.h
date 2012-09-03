@@ -80,8 +80,7 @@ private:
 	//
 	//
 	// restore
-	bool Restore(CGLObject* pObject);
-
+	bool _Restore(CGLObject* pObject, std::string file, std::string function, long line);
 	//////////////////////////////////////////////////////////////////////////
 	// register object
 	//
@@ -114,7 +113,8 @@ public:
 	bool Reset();
 	//
 	// restore
-	bool Restore();
+	bool _Restore( std::string file, std::string function, long line );
+	#define Restore() _Restore(__FILE__, __FUNCTION__, __LINE__)
 
 	//////////////////////////////////////////////////////////////////////////
 	inline PD3D11Device& GetDevice() { return m_pDevice; }

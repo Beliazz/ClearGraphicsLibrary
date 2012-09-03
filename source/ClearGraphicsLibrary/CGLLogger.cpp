@@ -64,11 +64,40 @@ void cgl::CGLLogger::LogObjectState( UINT logType, cgl::CGLObject* pObject, HRES
 	{
 	case CGL_NOTIFICATION_INVALID_PTR:			{ Print("ERROR: invalid ptr"); } break;
 	case CGL_NOTIFICATION_INSTANTIATION:		{ Print("INFO:  instantiated name=\"%s\" type=\"%s\"",					pObject->getName().c_str(), pObject->getTypeName().c_str()); } break;
-	case CGL_NOTIFICATION_CYCLIC_DEPENDENCY:	{ Print("ERROR: cyclic dependency detected name=\"%s\" type=\"%s\"",	pObject->getName().c_str(), pObject->getTypeName().c_str()); } break;
-	case CGL_NOTIFICATION_RESET:				{ Print("INFO:  reset name=\"%s\" type=\"%s\"",							pObject->getName().c_str(), pObject->getTypeName().c_str()); } break;
-	case CGL_NOTIFICATION_DESCTRUCTION:			{ Print("INFO:  destroyed name=\"%s\" type=\"%s\"",						pObject->getName().c_str(), pObject->getTypeName().c_str()); } break;
-	case CGL_NOTIFICATION_STILL_ALIVE:			{ Print("WARNING: still alive name=\"%s\" type=\"%s\"",					pObject->getName().c_str(), pObject->getTypeName().c_str()); } break;
-	case CGL_NOTIFICATION_COM_INTERFACE_STILL_ALIVE: { Print("ERROR:  name=\"%s\" type=\"%s\" -> OnReset() COM interface not fully released (%i refs)", pObject->getName().c_str(), pObject->getTypeName().c_str(), *((int*)pData) ); } break;
+	case CGL_NOTIFICATION_CYCLIC_DEPENDENCY:
+		{ 
+			Print("ERROR: cyclic dependency detected"
+				  "\n""%s",	
+				  pObject->toString().c_str());
+		} break;
+
+	case CGL_NOTIFICATION_RESET:
+		{
+			Print("INFO:  reset"
+				  "\n""%s",
+				  pObject->toString().c_str());
+		} break;
+
+	case CGL_NOTIFICATION_DESCTRUCTION:		
+		{ 
+			Print("INFO:  destroyed"
+				"\n""%s",
+				pObject->toString().c_str());
+		}break;
+
+	case CGL_NOTIFICATION_STILL_ALIVE:		
+		{ 
+			Print("WARNING: still alive"
+				"\n""%s",
+				pObject->toString().c_str());
+		} break;
+	case CGL_NOTIFICATION_COM_INTERFACE_STILL_ALIVE:
+		{ 
+			Print("ERROR: OnReset() -> COM interface not fully released (%i refs)"
+				  "\n""%s",
+				  *((int*)pData), 
+				  pObject->toString().c_str());
+		} break;
 	case CGL_NOTIFICATION_NO_DEVICE:
 		{
 			if (pObject)
@@ -106,18 +135,19 @@ void cgl::CGLLogger::LogObjectState( UINT logType, cgl::CGLObject* pObject, HRES
 		{
 			if (SUCCEEDED(result))
 			{
-				Print("INFO:  restored name=\"%s\" type=\"%s\"",
-					   pObject->getName().c_str(),
-					   pObject->getTypeName().c_str());
+				Print("INFO:  restored"
+					  "\n""%s",
+				      pObject->toString().c_str());
 			}
 			else
 			{
-				Print("ERROR: failed name=\"%s\" type=\"%s\" -> OnRestore()\n                            Error: %s"
-													                           "\n                            Description: %s\n",
-					   pObject->getName().c_str(),
-					   pObject->getTypeName().c_str(),
-					   DXGetErrorStringA(result),
-					   DXGetErrorDescriptionA(result));
+				Print("ERROR: restoring failed"
+					  "\n""%s"
+					  "\n Error: %s"
+					  "\n Description: %s\n",
+						pObject->toString().c_str(),	
+						DXGetErrorStringA(result),
+						DXGetErrorDescriptionA(result));
 			}
 		} break;
 

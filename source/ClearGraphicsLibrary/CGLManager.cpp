@@ -83,6 +83,9 @@ void cgl::CGLManager::Tidy()
 		count = m_coreObjects.size();
 		m_coreObjects.remove_if(IsGarbage);
 	}
+	//
+	// reverse back to the normal order
+	m_coreObjects.reverse();
 }
 
 bool cgl::CGLManager::IsGarbage( const PCGLObject& ptr )
@@ -192,7 +195,7 @@ void cgl::CGLManager::Unregister( PCGLObject pObject )
 	pObject->setRegistered(false);
 }
 
-bool cgl::CGLManager::Restore()
+bool cgl::CGLManager::_Restore( std::string file, std::string function, long line)
 {
 	// validate device
 	if ( !m_pDevice )
@@ -221,7 +224,7 @@ bool cgl::CGLManager::Restore()
 	PCGLObjectList::iterator it;
 	for (it = m_coreObjects.begin(); it != m_coreObjects.end(); it++)
 	{
-		if ( !Restore((*it).get()) )
+		if ( !_Restore((*it).get(), file, function, line) )
 		{
 			return false;
 		}
@@ -229,7 +232,7 @@ bool cgl::CGLManager::Restore()
 
 	return true;
 }
-bool cgl::CGLManager::Restore( CGLObject* pObject )
+bool cgl::CGLManager::_Restore( CGLObject* pObject, std::string file, std::string function, long line )
 {
 	if (!pObject->isRestored()) 
 	{
@@ -246,6 +249,11 @@ bool cgl::CGLManager::Restore( CGLObject* pObject )
 			pObject->setProcessing(true);
 		}
 
+		// set debug data
+		pObject->setCurrRestoreFile(file);
+		pObject->setCurrRestoreLine(line);
+		pObject->setCurrRestoreFunc(function);
+
 		// get dependencies
 		std::vector<PCGLObject> dependencies;
 		pObject->getDependencies(&dependencies);
@@ -254,7 +262,7 @@ bool cgl::CGLManager::Restore( CGLObject* pObject )
 		std::vector<PCGLObject>::iterator it;
 		for (it = dependencies.begin(); it != dependencies.end(); it++)
 		{
-			if (!(*it) || !Restore((*it).get()))
+			if (!(*it) || !_Restore((*it).get(), file, function, line))
 			{
 				pObject->setProcessing(false);
 				return false;
@@ -338,7 +346,8 @@ bool cgl::CGLManager::Depends( PCGLObject objectToCheck, PCGLObject possibleDepe
 	objectToCheck->getDependencies(&dependencies);
 	for (UINT i = 0; i < dependencies.size(); i++)
 	{
-		return Depends(dependencies[i], possibleDependency);
+		if(Depends(dependencies[i], possibleDependency))
+			return true;
 	}
 
 	return false;

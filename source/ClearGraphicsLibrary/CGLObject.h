@@ -45,12 +45,16 @@ class D3D11Device;
 class CGL_API CGLObject : protected CGLManagerConnector
 {
 friend class CGLManager;
+friend class CGLLogger;
 
 private:
 	UINT m_luid;
 	std::string m_typeName;
 	std::string m_name;
-	
+	std::string m_currRestoreFile;
+	std::string m_currRestoreFunc;
+	long m_currRestoreLine;
+
 	bool m_restored;
 	bool m_processing;
 	bool m_registered;
@@ -63,6 +67,14 @@ private:
 	inline bool processing()					{ return m_processing; }
 	inline bool registered()					{ return m_registered; }
 
+	inline void	setCurrRestoreFile(std::string file)	{ m_currRestoreFile = file; }
+	inline void	setCurrRestoreLine(long line)			{ m_currRestoreLine = line; }
+	inline void	setCurrRestoreFunc(std::string func)	{ m_currRestoreFunc = func; }
+
+	inline std::string currRestoreFile()				{ return m_currRestoreFile; }
+	inline long currRestoreLine()						{ return m_currRestoreLine; }
+	inline std::string currRestoreFunc()				{ return m_currRestoreFunc; }
+
 protected:	
 	void comReset(IUnknown** ppComPtr);
 
@@ -72,6 +84,8 @@ protected:
 	virtual HRESULT onRestore() PURE;
 	virtual void onReset() PURE;
 	virtual void getDependencies(std::vector<PCGLObject>* pDependencies ) PURE;
+	
+	virtual std::string toStringSpecific(std::string indent) { return ""; }
 
 public:
 	inline UINT getLuid()				{ return m_luid; }
@@ -82,8 +96,11 @@ public:
 	void setName(std::string name);
 	std::string getName();
 
-	bool restore();
+	bool _restore(std::string file, std::string function, long line);
+	#define restore() _restore(__FILE__, __FUNCTION__, __LINE__)
 	void reset();
+
+	std::string toString(std::string indent = "");
 
 	CGLObject(std::string className);
 	virtual ~CGLObject();

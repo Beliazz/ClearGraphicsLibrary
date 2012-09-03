@@ -12,7 +12,7 @@ cgl::CGLManagerConnector::CGLManagerConnector()
 UINT cgl::CGLObject::currLUID = 0;
 
 cgl::CGLObject::CGLObject(std::string className) 
-	: m_name("unknown"), m_processing(false), m_restored(false), m_luid(CGLObject::currLUID++), m_typeName(className), m_registered(false)
+	: m_name("unnamed"), m_processing(false), m_restored(false), m_luid(CGLObject::currLUID++), m_typeName(className), m_registered(false)
 {
 	if (mgr())
 	{
@@ -35,9 +35,9 @@ cgl::CGLObject::~CGLObject()
 	}
 }
 
-bool cgl::CGLObject::restore()
+bool cgl::CGLObject::_restore(std::string file, std::string function, long line)
 {
-	return mgr()->Restore(this);
+	return mgr()->_Restore(this, file, function, line);
 }
 void cgl::CGLObject::reset()
 {
@@ -53,7 +53,7 @@ void cgl::CGLObject::comReset(IUnknown** ppComPtr )
 			int refCount = (*ppComPtr)->Release();
 			if (refCount > 0)
 			{
-				CGLLogger::LogObjectState(CGL_NOTIFICATION_COM_INTERFACE_STILL_ALIVE, this, S_OK, &refCount);
+				// CGLLogger::LogObjectState(CGL_NOTIFICATION_COM_INTERFACE_STILL_ALIVE, this, S_OK, &refCount);
 			}
 
 			(*ppComPtr) = NULL;
@@ -72,6 +72,44 @@ void cgl::CGLObject::setName( std::string name )
 std::string cgl::CGLObject::getName()
 {
 	return m_name;
+}
+
+std::string cgl::CGLObject::toString(std::string indent)
+{
+	char buffer[8192];
+	ZeroMemory(buffer, sizeof(char) * 8192);
+
+	sprintf(buffer,
+			"%s CGLObject\n"
+			"%s {\n"
+			"%s    luid: %i\n"
+			"%s    name: \"%s\"\n"
+			"%s    type: %s\n"
+			"%s	   \n"
+			"%s	last restoration call\n"
+			"%s    {\n"
+			"%s       file: \"%s\"\n"
+			"%s       function: %s\n"
+			"%s       line: %i\n"
+			"%s    }\n"
+			"%s"
+			"%s }\n", 
+			indent.c_str(), 
+			indent.c_str(), 
+			indent.c_str(), m_luid,
+			indent.c_str(), m_name.c_str(), 
+			indent.c_str(), m_typeName.c_str(),
+			indent.c_str(), 
+			indent.c_str(), 
+			indent.c_str(), 
+			indent.c_str(), m_currRestoreFile.c_str(), 
+			indent.c_str(), m_currRestoreFunc.c_str(),
+			indent.c_str(), m_currRestoreLine,
+			indent.c_str(), 
+			toStringSpecific(indent + indent).c_str(),
+			indent.c_str());
+
+	return std::string(buffer);
 }
 
 //////////////////////////////////////////////////////////////////////////
