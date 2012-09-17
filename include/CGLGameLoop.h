@@ -65,6 +65,7 @@ class CGL_API CGLGameLoop : protected CGLManagerConnector
 	bool m_fullSpeed;
 	float m_fixedFrameRate;
 	Smoother<float>* m_pFrameSmoother;
+	HWND m_window;
 
 	bool m_running;
 	bool m_quitting;
@@ -75,7 +76,7 @@ class CGL_API CGLGameLoop : protected CGLManagerConnector
 	float m_elapsedSmoothed;
 
 public:
-	CGLGameLoop(ICGLGameLoopEventHandler* pHandler, float updateInterval = 1.0f / 60.0f );
+	CGLGameLoop(ICGLGameLoopEventHandler* pHandler, HWND window, float updateInterval = 1.0f / 60.0f );
 	~CGLGameLoop();
 	void Run();
 

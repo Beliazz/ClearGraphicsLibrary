@@ -1,8 +1,9 @@
 #include "cgl.h"
 
-cgl::CGLGameLoop::CGLGameLoop( ICGLGameLoopEventHandler* pHandler, float updateInterval /*= 1.0f / 60.0f */ ) :
+cgl::CGLGameLoop::CGLGameLoop( ICGLGameLoopEventHandler* pHandler, HWND window = NULL, float updateInterval /*= 1.0f / 60.0f */ ) :
 	m_pEvtHandler(pHandler), m_fixedFrameRate(updateInterval)
 {
+	m_window = window;
 	m_fullSpeed = false;
 	m_pFrameSmoother = new Smoother<float>(10, updateInterval);
 	m_quitting = false;
@@ -129,7 +130,7 @@ void cgl::CGLGameLoop::Run()
 		}
 
 		// process window messages
-		if(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		if(PeekMessage(&msg, m_window, 0, 0, PM_REMOVE))
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
