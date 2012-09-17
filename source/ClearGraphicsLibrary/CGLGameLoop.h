@@ -76,7 +76,7 @@ class CGL_API CGLGameLoop : protected CGLManagerConnector
 	float m_elapsedSmoothed;
 
 public:
-	CGLGameLoop(ICGLGameLoopEventHandler* pHandler, HWND window, float updateInterval = 1.0f / 60.0f );
+	CGLGameLoop(ICGLGameLoopEventHandler* pHandler, HWND window = NULL, float updateInterval = 1.0f / 60.0f );
 	~CGLGameLoop();
 	void Run();
 

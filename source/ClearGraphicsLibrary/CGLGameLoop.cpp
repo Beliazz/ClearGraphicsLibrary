@@ -1,6 +1,6 @@
 #include "cgl.h"
 
-cgl::CGLGameLoop::CGLGameLoop( ICGLGameLoopEventHandler* pHandler, HWND window = NULL, float updateInterval /*= 1.0f / 60.0f */ ) :
+cgl::CGLGameLoop::CGLGameLoop( ICGLGameLoopEventHandler* pHandler, HWND window, float updateInterval /*= 1.0f / 60.0f */ ) :
 	m_pEvtHandler(pHandler), m_fixedFrameRate(updateInterval)
 {
 	m_window = window;
