@@ -8,6 +8,14 @@ namespace cgl {
 typedef bool (CALLBACK*  CGLNotificationCallback)(UINT, CGLObject*, HRESULT, std::string, std::string);
 typedef std::tr1::shared_ptr<CGLManager> PCGLManager;
 
+#ifdef CGL_DEBUG
+#define CGL_RESTORE(x) x->restoreDbg(__FILE__, __FUNCTION__, __LINE__)
+#define CGL_RESTORE_ALL(mgr) mgr->RestoreDbg(__FILE__, __FUNCTION__, __LINE__)
+#else
+#define CGL_RESTORE(x) x->restore()
+#define CGL_RESTORE_ALL(mgr) mgr->Restore()
+#endif
+
 class CGL_API CGLManager
 {
 friend class CGLManagerConnector;
@@ -80,7 +88,9 @@ private:
 	//
 	//
 	// restore
-	bool _Restore(CGLObject* pObject, std::string file, std::string function, long line);
+	bool RestoreDbg(CGLObject* pObject, std::string file, std::string function, long line);
+	bool Restore(CGLObject* pObject);
+	//
 	//////////////////////////////////////////////////////////////////////////
 	// register object
 	//
@@ -113,8 +123,8 @@ public:
 	bool Reset();
 	//
 	// restore
-	bool _Restore( std::string file, std::string function, long line );
-	#define Restore() _Restore(__FILE__, __FUNCTION__, __LINE__)
+	bool RestoreDbg( std::string file, std::string function, long line );
+	bool Restore();
 
 	//////////////////////////////////////////////////////////////////////////
 	inline PD3D11Device& GetDevice() { return m_pDevice; }

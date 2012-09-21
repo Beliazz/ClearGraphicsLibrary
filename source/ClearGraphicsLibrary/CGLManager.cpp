@@ -195,7 +195,7 @@ void cgl::CGLManager::Unregister( PCGLObject pObject )
 	pObject->setRegistered(false);
 }
 
-bool cgl::CGLManager::_Restore( std::string file, std::string function, long line)
+bool cgl::CGLManager::RestoreDbg( std::string file, std::string function, long line)
 {
 	// validate device
 	if ( !m_pDevice )
@@ -224,7 +224,7 @@ bool cgl::CGLManager::_Restore( std::string file, std::string function, long lin
 	PCGLObjectList::iterator it;
 	for (it = m_coreObjects.begin(); it != m_coreObjects.end(); it++)
 	{
-		if ( !_Restore((*it).get(), file, function, line) )
+		if ( !RestoreDbg((*it).get(), file, function, line) )
 		{
 			return false;
 		}
@@ -232,7 +232,45 @@ bool cgl::CGLManager::_Restore( std::string file, std::string function, long lin
 
 	return true;
 }
-bool cgl::CGLManager::_Restore( CGLObject* pObject, std::string file, std::string function, long line )
+bool cgl::CGLManager::Restore()
+{
+	// validate device
+	if ( !m_pDevice )
+	{
+		Notify(CGL_NOTIFICATION_NO_DEVICE, NULL);
+
+		return false; 
+	}
+
+	// restore device
+	if(!m_pDevice->isRestored())
+	{
+		HRESULT result = m_pDevice->onRestore();
+		Notify(CGL_NOTIFICATION_RESTORATION, m_pDevice.get(), result);
+
+		if (FAILED(result))
+		{ 
+			return false;
+		}	
+
+		// device successfully restored
+		m_pDevice->setRestored(true);
+	}
+
+	// restore registered objects
+	PCGLObjectList::iterator it;
+	for (it = m_coreObjects.begin(); it != m_coreObjects.end(); it++)
+	{
+		if ( !Restore((*it).get()) )
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool cgl::CGLManager::RestoreDbg( CGLObject* pObject, std::string file, std::string function, long line )
 {
 	if (!pObject->isRestored()) 
 	{
@@ -262,7 +300,57 @@ bool cgl::CGLManager::_Restore( CGLObject* pObject, std::string file, std::strin
 		std::vector<PCGLObject>::iterator it;
 		for (it = dependencies.begin(); it != dependencies.end(); it++)
 		{
-			if (!(*it) || !_Restore((*it).get(), file, function, line))
+			if (!(*it) || !RestoreDbg((*it).get(), file, function, line))
+			{
+				pObject->setProcessing(false);
+				return false;
+			}
+		}
+
+		// restore object
+		HRESULT result = pObject->onRestore();
+		Notify(CGL_NOTIFICATION_RESTORATION, pObject, result);
+
+		if (FAILED(result))
+		{
+			pObject->setProcessing(false);
+
+			return false;
+		}
+
+		// restoring finished
+		pObject->setRestored(true);
+		pObject->setProcessing(false);
+	}
+
+	return true;
+}
+bool cgl::CGLManager::Restore( CGLObject* pObject )
+{
+	if (!pObject->isRestored()) 
+	{
+		// if already restoring we have cyclic dependency
+		if (pObject->processing())
+		{
+			pObject->setProcessing(false);
+			Notify(CGL_NOTIFICATION_CYCLIC_DEPENDENCY, pObject, S_FALSE);
+			return false;
+		}
+		else
+		{
+			// indicate that this object is about to be restored
+			pObject->setProcessing(true);
+		}
+
+		// get dependencies
+		std::vector<PCGLObject> dependencies;
+		pObject->getDependencies(&dependencies);
+
+		// restore dependencies 
+		std::vector<PCGLObject>::iterator it;
+		for (it = dependencies.begin(); it != dependencies.end(); it++)
+		{
+			if (!(*it) || !Restore((*it).get()))
 			{
 				pObject->setProcessing(false);
 				return false;

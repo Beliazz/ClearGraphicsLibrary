@@ -35,10 +35,15 @@ cgl::CGLObject::~CGLObject()
 	}
 }
 
-bool cgl::CGLObject::_restore(std::string file, std::string function, long line)
+bool cgl::CGLObject::restoreDbg(std::string file, std::string function, long line)
 {
-	return mgr()->_Restore(this, file, function, line);
+	return mgr()->RestoreDbg(this, file, function, line);
 }
+bool cgl::CGLObject::restore()
+{
+	return mgr()->Restore(this);
+}
+
 void cgl::CGLObject::reset()
 {
 	mgr()->Reset(this);

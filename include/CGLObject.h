@@ -96,8 +96,9 @@ public:
 	void setName(std::string name);
 	std::string getName();
 
-	bool _restore(std::string file, std::string function, long line);
-	#define restore() _restore(__FILE__, __FUNCTION__, __LINE__)
+	bool restoreDbg(std::string file, std::string function, long line);
+	bool restore();
+
 	void reset();
 
 	std::string toString(std::string indent = "");
