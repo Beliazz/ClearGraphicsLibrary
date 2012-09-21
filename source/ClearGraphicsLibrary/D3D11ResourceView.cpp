@@ -39,9 +39,20 @@ HRESULT cgl::CD3D11ShaderResourceView::onRestore()
 			pTex->GetDesc(&desc);
 
 			m_desc.Format = desc.Format;
-			m_desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-			m_desc.Texture2D.MipLevels = desc.MipLevels;
-			m_desc.Texture2D.MostDetailedMip = 0;
+			if (desc.ArraySize == 1)
+			{				
+				m_desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+				m_desc.Texture2D.MipLevels = desc.MipLevels;
+				m_desc.Texture2D.MostDetailedMip = 0;
+			}
+			else
+			{
+				m_desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
+				m_desc.Texture2DArray.MipLevels = desc.MipLevels;
+				m_desc.Texture2DArray.MostDetailedMip = 0;
+				m_desc.Texture2DArray.ArraySize = desc.ArraySize;
+				m_desc.Texture2DArray.FirstArraySlice = 0;
+			}
 
 		} break;
 

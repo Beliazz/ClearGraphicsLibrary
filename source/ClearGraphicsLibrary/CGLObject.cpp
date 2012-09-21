@@ -8,7 +8,7 @@ cgl::CGLManagerConnector::CGLManagerConnector()
 }
 
 //////////////////////////////////////////////////////////////////////////
-// CGLBase
+// CGLObject
 UINT cgl::CGLObject::currLUID = 0;
 
 cgl::CGLObject::CGLObject(std::string className) 

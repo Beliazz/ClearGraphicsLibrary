@@ -15,6 +15,12 @@ class CGL_API CGLWindow : public CGLBase<HWND__>
 {
 public:
 	CGLWindow(std::string className) : CGLBase(className) {}
+
+	void PeekMessages();
+	void GetMessages();
+
+	static void PeekMessages(HWND handle);
+	static void GetMessages(HWND handle);
 };
 
 class CGL_API CGLWindowFromConfig : public CGLWindow

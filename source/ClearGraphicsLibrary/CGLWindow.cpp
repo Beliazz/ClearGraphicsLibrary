@@ -1,6 +1,47 @@
 #include "cgl.h"
 
 //////////////////////////////////////////////////////////////////////////
+// cgl window base class
+void cgl::CGLWindow::PeekMessages()
+{
+	MSG msg = MSG();
+	while(PeekMessage(&msg, get(), 0, 0, PM_REMOVE))
+	{
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+}
+void cgl::CGLWindow::GetMessages()
+{
+	MSG msg = MSG();
+	while(GetMessage(&msg, get(), 0, 0))
+	{
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+}
+//
+// static functions
+void cgl::CGLWindow::PeekMessages(HWND handle)
+{
+	MSG msg = MSG();
+	while(PeekMessage(&msg, handle, 0, 0, PM_REMOVE))
+	{
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+}
+void cgl::CGLWindow::GetMessages(HWND handle)
+{
+	MSG msg = MSG();
+	while(GetMessage(&msg, handle, 0, 0))
+	{
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////
 // CGLWindowFromConfig
 // 
 cgl::CGLWindowFromConfig::CGLWindowFromConfig( LPCWSTR title , UINT width, UINT height, WNDPROC messageProc, HINSTANCE instance /*= NULL*/, LPCWSTR cursorName /*= IDC_ARROW */ ) :

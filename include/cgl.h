@@ -49,7 +49,6 @@
 #include "CGLInputProcessor.h"
 #include "CGLLogger.h"
 #include "CGLWindow.h"
-#include "CGLGameLoop.h"
 
 #include "DXGIFactory.h"
 #include "D3D11Device.h"
@@ -62,6 +61,7 @@
 #include "D3D11ResourceView.h"
 #include "D3D11Query.h"
 
+#include "CGLGameLoop.h"
 #include "CGLBindCollection.h"
 
 #include "CGLManager.h"

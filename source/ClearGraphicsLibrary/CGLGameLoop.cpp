@@ -5,13 +5,25 @@ cgl::CGLGameLoop::CGLGameLoop( ICGLGameLoopEventHandler* pHandler, HWND window, 
 {
 	m_window = window;
 	m_fullSpeed = false;
-	m_pFrameSmoother = new Smoother<float>(10, updateInterval);
+	m_pFrameSmoother = new Smoother<float>(5, updateInterval);
 	m_quitting = false;
 	m_running = false;
 	m_time = 0.0;
 	m_timeSmoothed = 0.0;
 	m_elapsed = 0.0f;
 	m_elapsedSmoothed = 0.0f;
+
+	D3D11_QUERY_DESC timeQueryDesc;
+	ZeroMemory(&timeQueryDesc, sizeof(timeQueryDesc));
+	timeQueryDesc.Query = D3D11_QUERY_TIMESTAMP;
+	m_timeQuery = cgl::CD3D11Query::Create(timeQueryDesc);
+	m_timeQuery->restore();
+
+	D3D11_QUERY_DESC disjointQueryDesc;
+	ZeroMemory(&disjointQueryDesc, sizeof(disjointQueryDesc));
+	disjointQueryDesc.Query = D3D11_QUERY_TIMESTAMP_DISJOINT;
+	m_disjointQuery = cgl::CD3D11Query::Create(disjointQueryDesc);
+	m_disjointQuery->restore();
 }
 
 void cgl::CGLGameLoop::Run()
@@ -23,8 +35,6 @@ void cgl::CGLGameLoop::Run()
 	bool updated = false;
 	bool drawn = false;
 	bool occluded = false;
-
-	MSG msg;
 
 	// get timer frequency
 	QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
@@ -51,7 +61,36 @@ void cgl::CGLGameLoop::Run()
 		// render
 		if(updated && !occluded)
 		{
+			mgr()->GetDevice()->GetContext()->Begin(m_disjointQuery->get());
+			mgr()->GetDevice()->GetContext()->End(m_timeQuery->get());
+
+			//
+			// get start ticks
+			UINT64 ticks = 0;
+			m_timeQuery->GetData(&ticks);
+
+			// render
 			m_pEvtHandler->OnRender(m_timeSmoothed, updateInterval);
+
+			mgr()->GetDevice()->GetContext()->End(m_timeQuery->get());
+			mgr()->GetDevice()->GetContext()->End(m_disjointQuery->get());
+
+			//
+			// get end ticks
+			UINT64 endTicks = 0;
+			m_timeQuery->GetData(&endTicks);
+			ticks = endTicks - ticks;
+
+			D3D11_QUERY_DATA_TIMESTAMP_DISJOINT disjointData;
+			ZeroMemory(&disjointData, sizeof(D3D11_QUERY_DATA_TIMESTAMP_DISJOINT));
+			m_disjointQuery->GetData(&disjointData);
+
+			if (!disjointData.Disjoint)
+			{
+				// query data is valid
+				// calculate time in seconds
+				m_drawTime = ticks / (float)disjointData.Frequency;
+			} 
 
 			drawn = true;
 			updated = false;
@@ -67,8 +106,8 @@ void cgl::CGLGameLoop::Run()
 				timeAccount -= updateInterval;
 			}
 			
-// 			// remove chunk
-// 			mgr()->Tidy();
+			// remove chunk
+			mgr()->Tidy();
 
 			// if the window was not visible previously
 			// perform a check if its still occluded
@@ -129,12 +168,10 @@ void cgl::CGLGameLoop::Run()
 			drawn = false;
 		}
 
+		// idle 
+		// 
 		// process window messages
-		if(PeekMessage(&msg, m_window, 0, 0, PM_REMOVE))
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
+		m_pEvtHandler->OnIdle();
 
 		// measure end ticks
 		QueryPerformanceCounter((LARGE_INTEGER*)&end);

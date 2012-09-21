@@ -34,7 +34,10 @@ public:
 			T avg;
 			UINT i;
 			ZeroMemory(&avg, sizeof(avg));
-			for ( i = 0; i < n; i++) avg += m_pBuffer[i];
+
+			for ( i = 0; i < n; i++) 
+				avg += m_pBuffer[i];
+
 			avg /= static_cast<T>(i);
 			return avg;
 		}
@@ -45,11 +48,12 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////////
-// ICGLGameLoop
+// ICGLGameLoop Event handler
 __interface CGL_API ICGLGameLoopEventHandler
 {
 	void OnRender(double dTime, float fElapsed);
 	bool OnUpdate(double dTime, float fElapsed);
+	void OnIdle();
 	void OnReset();
 	void OnRestore();
 	void OnDeviceLost();
@@ -75,6 +79,11 @@ class CGL_API CGLGameLoop : protected CGLManagerConnector
 	float m_elapsed;
 	float m_elapsedSmoothed;
 
+	PD3D11Query m_timeQuery;
+	PD3D11Query m_disjointQuery;
+
+	float m_drawTime;
+
 public:
 	CGLGameLoop(ICGLGameLoopEventHandler* pHandler, HWND window = NULL, float updateInterval = 1.0f / 60.0f );
 	~CGLGameLoop();
@@ -91,6 +100,8 @@ public:
 	inline float ElapsedTimeExact()				{ return m_elapsed; }
 	inline double Time()						{ return m_timeSmoothed; }
 	inline double TimeExact()					{ return m_time; }
+
+	inline float DrawTime()						{ return m_drawTime; }
 };
 
 }
