@@ -20,6 +20,9 @@
     <Filter Include="Source\Interface Wrapper">
       <UniqueIdentifier>{966cb7d6-5421-4b66-aef4-07c4a7ffe190}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Drawing">
+      <UniqueIdentifier>{52d527f6-08bc-43ec-90df-e5702de7dd42}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cgl.h">
@@ -85,6 +88,15 @@
     <ClInclude Include=".\CGLTimer.h">
       <Filter>Source\Helper Classes</Filter>
     </ClInclude>
+    <ClInclude Include="CGLSpriteBatch.h">
+      <Filter>Source\Drawing</Filter>
+    </ClInclude>
+    <ClInclude Include="CGLSprite.h">
+      <Filter>Source\Drawing</Filter>
+    </ClInclude>
+    <ClInclude Include="CGLLabel.h">
+      <Filter>Source\Drawing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cgl.cpp">
@@ -143,6 +155,15 @@
     </ClCompile>
     <ClCompile Include=".\CGLTimer.cpp">
       <Filter>Source\Helper Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="CGLSprite.cpp">
+      <Filter>Source\Drawing</Filter>
+    </ClCompile>
+    <ClCompile Include="CGLSpriteBatch.cpp">
+      <Filter>Source\Drawing</Filter>
+    </ClCompile>
+    <ClCompile Include="CGLLabel.cpp">
+      <Filter>Source\Drawing</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

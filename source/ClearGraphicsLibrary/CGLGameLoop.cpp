@@ -30,6 +30,8 @@ cgl::CGLGameLoop::CGLGameLoop( ICGLGameLoopEventHandler* pHandler, HWND window, 
 	m_loopTimer = CGLCpuTimer::Create();
 	m_onIdleTimer = CGLCpuTimer::Create();
 	m_onRenderTimer = CGLCpuTimer::Create();
+
+	m_measureDrawTime = false;
 }
 
 void cgl::CGLGameLoop::Run()
@@ -60,11 +62,15 @@ void cgl::CGLGameLoop::Run()
 		if(updated && !occluded)
 		{
 			// render
-			m_gpuTimer->Start();
+			if(m_measureDrawTime)
+				m_gpuTimer->Start();
+
 			m_onRenderTimer->Start();
 			m_pEvtHandler->OnRender(m_timeSmoothed, updateInterval);
 			m_onRenderTimer->Stop();
-			m_gpuTimer->Stop();
+
+			if(m_measureDrawTime)
+				m_gpuTimer->Stop();
 
 			drawn = true;
 			updated = false;

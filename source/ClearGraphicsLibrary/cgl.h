@@ -62,10 +62,11 @@
 #include "D3D11Query.h"
 
 #include "CGLTimer.h"
-
 #include "CGLGameLoop.h"
 #include "CGLBindCollection.h"
-
 #include "CGLManager.h"
+
+#include "CGLSprite.h"
+#include "CGLSpriteBatch.h"
 
 #endif // cgl_h__

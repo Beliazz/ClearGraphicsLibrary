@@ -85,12 +85,16 @@ class CGL_API CGLGameLoop : protected CGLManagerConnector
 	PCGLTimer m_onIdleTimer;
 	PCGLTimer m_onRenderTimer;
 
+	bool m_measureDrawTime;
+
 public:
 	CGLGameLoop(ICGLGameLoopEventHandler* pHandler, HWND window = NULL, float updateInterval = 1.0f / 60.0f );
 	~CGLGameLoop();
 	void Run();
 
 	void SetUpdateInterval(float updateInterval);
+	void EnableDrawTimeMeasurement(bool enable)	{ m_measureDrawTime = enable; }
+
 	inline float UpdateInterval()				{ return m_fixedFrameRate; }
 	inline void EnableFullSpeed(bool enable)	{ m_fullSpeed = enable; }
 	inline bool Running()						{ return m_running; }
@@ -102,7 +106,7 @@ public:
 	inline double Time()						{ return m_timeSmoothed; }
 	inline double TimeExact()					{ return m_time; }
 
-	inline float DrawTime()						{ return m_gpuTimer->get(); }//m_drawTime; }
+	inline float DrawTime()						{ return m_gpuTimer->get(); }
 	inline float OnUpdateTime()					{ return m_onUpdateTimer->get(); }
 	inline float OnIdleTime()					{ return m_onIdleTimer->get(); }
 	inline float OnRenderTime()					{ return m_onRenderTimer->get(); }

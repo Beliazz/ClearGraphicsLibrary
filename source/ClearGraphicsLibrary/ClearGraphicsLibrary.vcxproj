@@ -126,9 +126,12 @@ robocopy $(ProjectDir) $(CGL_HOME)\include "*.h" /PURGE /XD "$(OutDir)"
     <ClInclude Include="CGLDataProvider.h" />
     <ClInclude Include="CGLGameLoop.h" />
     <ClInclude Include="CGLInputProcessor.h" />
+    <ClInclude Include="CGLLabel.h" />
     <ClInclude Include="CGLLogger.h" />
     <ClInclude Include="CGLInstancing.h" />
     <ClInclude Include=".\CGLTimer.h" />
+    <ClInclude Include="CGLSprite.h" />
+    <ClInclude Include="CGLSpriteBatch.h" />
     <ClInclude Include="D3D11Buffer.h" />
     <ClInclude Include="D3D11Device.h" />
     <ClInclude Include="D3D11Effect.h" />
@@ -149,6 +152,9 @@ robocopy $(ProjectDir) $(CGL_HOME)\include "*.h" /PURGE /XD "$(OutDir)"
     <ClCompile Include="CGLGameLoop.cpp" />
     <ClCompile Include="CGLInputProcessor.cpp" />
     <ClCompile Include=".\CGLTimer.cpp" />
+    <ClCompile Include="CGLLabel.cpp" />
+    <ClCompile Include="CGLSprite.cpp" />
+    <ClCompile Include="CGLSpriteBatch.cpp" />
     <ClCompile Include="D3D11InputLayout.cpp" />
     <ClCompile Include="D3D11Query.cpp" />
     <ClCompile Include="CGLObject.cpp" />
