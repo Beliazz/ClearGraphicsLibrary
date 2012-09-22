@@ -13,36 +13,30 @@ cgl::CGLGameLoop::CGLGameLoop( ICGLGameLoopEventHandler* pHandler, HWND window, 
 	m_elapsed = 0.0f;
 	m_elapsedSmoothed = 0.0f;
 
-	D3D11_QUERY_DESC timeQueryDesc;
-	ZeroMemory(&timeQueryDesc, sizeof(timeQueryDesc));
-	timeQueryDesc.Query = D3D11_QUERY_TIMESTAMP;
-	m_timeQuery = cgl::CD3D11Query::Create(timeQueryDesc);
-	m_timeQuery->restore();
+// 	D3D11_QUERY_DESC timeQueryDesc;
+// 	ZeroMemory(&timeQueryDesc, sizeof(timeQueryDesc));
+// 	timeQueryDesc.Query = D3D11_QUERY_TIMESTAMP;
+// 	m_timeQuery = cgl::CD3D11Query::Create(timeQueryDesc);
+// 	m_timeQuery->restore();
+// 
+// 	D3D11_QUERY_DESC disjointQueryDesc;
+// 	ZeroMemory(&disjointQueryDesc, sizeof(disjointQueryDesc));
+// 	disjointQueryDesc.Query = D3D11_QUERY_TIMESTAMP_DISJOINT;
+// 	m_disjointQuery = cgl::CD3D11Query::Create(disjointQueryDesc);
+// 	m_disjointQuery->restore();
 
-	D3D11_QUERY_DESC disjointQueryDesc;
-	ZeroMemory(&disjointQueryDesc, sizeof(disjointQueryDesc));
-	disjointQueryDesc.Query = D3D11_QUERY_TIMESTAMP_DISJOINT;
-	m_disjointQuery = cgl::CD3D11Query::Create(disjointQueryDesc);
-	m_disjointQuery->restore();
-
-	m_onUpdateTimer = CGLTimer::Create();
-	m_loopTimer = CGLTimer::Create();
-	m_onIdleTimer = CGLTimer::Create();
-	m_onRenderTimer = CGLTimer::Create();
+	m_gpuTimer = CGLGpuTimer::Create();
+	m_onUpdateTimer = CGLCpuTimer::Create();
+	m_loopTimer = CGLCpuTimer::Create();
+	m_onIdleTimer = CGLCpuTimer::Create();
+	m_onRenderTimer = CGLCpuTimer::Create();
 }
 
 void cgl::CGLGameLoop::Run()
 {
-	UINT64 start;
-	UINT64 end;
-	UINT64 frequency;
-
 	bool updated = false;
 	bool drawn = false;
 	bool occluded = false;
-
-	// get timer frequency
-	QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
 
 	// set running
 	m_running = true;
@@ -58,45 +52,19 @@ void cgl::CGLGameLoop::Run()
 	while (!m_quitting)
 	{
 		// measure start ticks
-		QueryPerformanceCounter((LARGE_INTEGER*)&start);
+		m_loopTimer->Start();
 
 		// if the game was updated
 		// and the window is visible
 		// render
 		if(updated && !occluded)
 		{
-			mgr()->GetDevice()->GetContext()->Begin(m_disjointQuery->get());
-			mgr()->GetDevice()->GetContext()->End(m_timeQuery->get());
-
-			//
-			// get start ticks
-			UINT64 ticks = 0;
-			m_timeQuery->GetData(&ticks);
-
 			// render
+			m_gpuTimer->Start();
 			m_onRenderTimer->Start();
 			m_pEvtHandler->OnRender(m_timeSmoothed, updateInterval);
 			m_onRenderTimer->Stop();
-
-			mgr()->GetDevice()->GetContext()->End(m_timeQuery->get());
-			mgr()->GetDevice()->GetContext()->End(m_disjointQuery->get());
-
-			//
-			// get end ticks
-			UINT64 endTicks = 0;
-			m_timeQuery->GetData(&endTicks);
-			ticks = endTicks - ticks;
-
-			D3D11_QUERY_DATA_TIMESTAMP_DISJOINT disjointData;
-			ZeroMemory(&disjointData, sizeof(D3D11_QUERY_DATA_TIMESTAMP_DISJOINT));
-			m_disjointQuery->GetData(&disjointData);
-
-			if (!disjointData.Disjoint)
-			{
-				// query data is valid
-				// calculate time in seconds
-				m_drawTime = ticks / (float)disjointData.Frequency;
-			} 
+			m_gpuTimer->Stop();
 
 			drawn = true;
 			updated = false;
@@ -185,13 +153,10 @@ void cgl::CGLGameLoop::Run()
 		m_onIdleTimer->Stop();
 
 		// measure end ticks
-		QueryPerformanceCounter((LARGE_INTEGER*)&end);
+		m_loopTimer->Stop();
 
-		// calculate elapsed time in seconds and
-		// add it to the frame smoother
-		m_elapsed =  (float)(end - start) / frequency;
-		m_time += m_elapsed;
-		m_pFrameSmoother->Add(m_elapsed);
+		m_time += m_loopTimer->get();
+		m_pFrameSmoother->Add(m_loopTimer->get());
 
 		// smoothed elapsed time
 		m_elapsedSmoothed = m_pFrameSmoother->GetSmoothed();

@@ -7,6 +7,21 @@ cgl::CGLManagerConnector::CGLManagerConnector()
 	m_pMgr = cgl::CGLManager::GetInstance();
 }
 
+ID3D11DeviceContext* cgl::CGLManagerConnector::Context()
+{
+	return m_pMgr->GetDevice()->GetContext();
+}
+
+ID3D11Device* cgl::CGLManagerConnector::Device()
+{
+	return m_pMgr->GetDevice()->GetDevice();
+}
+
+IDXGISwapChain* cgl::CGLManagerConnector::SwapChain()
+{
+	return m_pMgr->GetDevice()->GetSwapChain();
+}
+
 //////////////////////////////////////////////////////////////////////////
 // CGLObject
 UINT cgl::CGLObject::currLUID = 0;

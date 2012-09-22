@@ -37,6 +37,9 @@ private:
 public:
 	CGLManagerConnector();
 	inline CGLManager* mgr() { return m_pMgr; }
+	ID3D11DeviceContext* Context();
+	ID3D11Device* Device();
+	IDXGISwapChain* SwapChain();
 };
 
 //////////////////////////////////////////////////////////////////////////

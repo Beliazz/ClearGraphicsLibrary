@@ -79,15 +79,11 @@ class CGL_API CGLGameLoop : protected CGLManagerConnector
 	float m_elapsed;
 	float m_elapsedSmoothed;
 
-	PD3D11Query m_timeQuery;
-	PD3D11Query m_disjointQuery;
-
 	PCGLTimer m_loopTimer;
+	PCGLTimer m_gpuTimer;
 	PCGLTimer m_onUpdateTimer;
 	PCGLTimer m_onIdleTimer;
 	PCGLTimer m_onRenderTimer;
-
-	float m_drawTime;
 
 public:
 	CGLGameLoop(ICGLGameLoopEventHandler* pHandler, HWND window = NULL, float updateInterval = 1.0f / 60.0f );
@@ -106,7 +102,7 @@ public:
 	inline double Time()						{ return m_timeSmoothed; }
 	inline double TimeExact()					{ return m_time; }
 
-	inline float DrawTime()						{ return m_drawTime; }
+	inline float DrawTime()						{ return m_gpuTimer->get(); }//m_drawTime; }
 	inline float OnUpdateTime()					{ return m_onUpdateTimer->get(); }
 	inline float OnIdleTime()					{ return m_onIdleTimer->get(); }
 	inline float OnRenderTime()					{ return m_onRenderTimer->get(); }
