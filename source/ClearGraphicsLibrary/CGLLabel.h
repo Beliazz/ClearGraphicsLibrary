@@ -2,12 +2,23 @@
 
 #include "cgl.h"
 
-
-
-class CGLLabel
+namespace cgl
 {
-public:
-	CGLLabel(void);
-	~CGLLabel(void);
-};
+	namespace drawing
+	{
+		class CGLLabel
+		{
+		private:
+			PCGLSprite		m_sprite;
+			PCGLSpriteBatch	m_spriteBatch;
+
+			CGLLabel(void);
+
+		public:
+			
+		};
+	}
+}
+
+
 

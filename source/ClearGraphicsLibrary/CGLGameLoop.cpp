@@ -13,18 +13,6 @@ cgl::CGLGameLoop::CGLGameLoop( ICGLGameLoopEventHandler* pHandler, HWND window, 
 	m_elapsed = 0.0f;
 	m_elapsedSmoothed = 0.0f;
 
-// 	D3D11_QUERY_DESC timeQueryDesc;
-// 	ZeroMemory(&timeQueryDesc, sizeof(timeQueryDesc));
-// 	timeQueryDesc.Query = D3D11_QUERY_TIMESTAMP;
-// 	m_timeQuery = cgl::CD3D11Query::Create(timeQueryDesc);
-// 	m_timeQuery->restore();
-// 
-// 	D3D11_QUERY_DESC disjointQueryDesc;
-// 	ZeroMemory(&disjointQueryDesc, sizeof(disjointQueryDesc));
-// 	disjointQueryDesc.Query = D3D11_QUERY_TIMESTAMP_DISJOINT;
-// 	m_disjointQuery = cgl::CD3D11Query::Create(disjointQueryDesc);
-// 	m_disjointQuery->restore();
-
 	m_gpuTimer = CGLGpuTimer::Create();
 	m_onUpdateTimer = CGLCpuTimer::Create();
 	m_loopTimer = CGLCpuTimer::Create();
@@ -161,6 +149,7 @@ void cgl::CGLGameLoop::Run()
 		// measure end ticks
 		m_loopTimer->Stop();
 
+		m_elapsed = m_loopTimer->get();
 		m_time += m_loopTimer->get();
 		m_pFrameSmoother->Add(m_loopTimer->get());
 
