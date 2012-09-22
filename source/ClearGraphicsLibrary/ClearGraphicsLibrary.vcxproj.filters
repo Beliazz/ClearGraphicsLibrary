@@ -82,6 +82,9 @@
     <ClInclude Include="CGLGameLoop.h">
       <Filter>Source\Helper Classes</Filter>
     </ClInclude>
+    <ClInclude Include="CGLTimer.h">
+      <Filter>Source\Helper Classes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cgl.cpp">
@@ -136,6 +139,9 @@
       <Filter>Source\Interface Wrapper</Filter>
     </ClCompile>
     <ClCompile Include="CGLGameLoop.cpp">
+      <Filter>Source\Helper Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="CGLTimer.cpp">
       <Filter>Source\Helper Classes</Filter>
     </ClCompile>
   </ItemGroup>

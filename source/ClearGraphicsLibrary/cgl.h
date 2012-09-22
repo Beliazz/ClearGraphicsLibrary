@@ -61,6 +61,7 @@
 #include "D3D11ResourceView.h"
 #include "D3D11Query.h"
 
+#include "CGLTimer.h"
 #include "CGLGameLoop.h"
 #include "CGLBindCollection.h"
 

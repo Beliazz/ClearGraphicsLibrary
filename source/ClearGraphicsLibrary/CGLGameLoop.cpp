@@ -24,6 +24,11 @@ cgl::CGLGameLoop::CGLGameLoop( ICGLGameLoopEventHandler* pHandler, HWND window, 
 	disjointQueryDesc.Query = D3D11_QUERY_TIMESTAMP_DISJOINT;
 	m_disjointQuery = cgl::CD3D11Query::Create(disjointQueryDesc);
 	m_disjointQuery->restore();
+
+	m_onUpdateTimer = CGLTimer::Create();
+	m_loopTimer = CGLTimer::Create();
+	m_onIdleTimer = CGLTimer::Create();
+	m_onRenderTimer = CGLTimer::Create();
 }
 
 void cgl::CGLGameLoop::Run()
@@ -47,7 +52,6 @@ void cgl::CGLGameLoop::Run()
 	m_time = 0.0;
 	m_timeSmoothed = 0.0;
 
-	
 	float updateInterval = m_fixedFrameRate;
 	float timeAccount = updateInterval;
 
@@ -70,7 +74,9 @@ void cgl::CGLGameLoop::Run()
 			m_timeQuery->GetData(&ticks);
 
 			// render
+			m_onRenderTimer->Start();
 			m_pEvtHandler->OnRender(m_timeSmoothed, updateInterval);
+			m_onRenderTimer->Stop();
 
 			mgr()->GetDevice()->GetContext()->End(m_timeQuery->get());
 			mgr()->GetDevice()->GetContext()->End(m_disjointQuery->get());
@@ -102,7 +108,10 @@ void cgl::CGLGameLoop::Run()
 		{
 			while (timeAccount >= updateInterval)
 			{
+				m_onUpdateTimer->Start();
 				m_pEvtHandler->OnUpdate(m_timeSmoothed, updateInterval);
+				m_onUpdateTimer->Stop();
+
 				timeAccount -= updateInterval;
 			}
 			
@@ -171,7 +180,9 @@ void cgl::CGLGameLoop::Run()
 		// idle 
 		// 
 		// process window messages
+		m_onIdleTimer->Start();
 		m_pEvtHandler->OnIdle();
+		m_onIdleTimer->Stop();
 
 		// measure end ticks
 		QueryPerformanceCounter((LARGE_INTEGER*)&end);

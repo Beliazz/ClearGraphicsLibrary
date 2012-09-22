@@ -82,6 +82,11 @@ class CGL_API CGLGameLoop : protected CGLManagerConnector
 	PD3D11Query m_timeQuery;
 	PD3D11Query m_disjointQuery;
 
+	PCGLTimer m_loopTimer;
+	PCGLTimer m_onUpdateTimer;
+	PCGLTimer m_onIdleTimer;
+	PCGLTimer m_onRenderTimer;
+
 	float m_drawTime;
 
 public:
@@ -102,6 +107,9 @@ public:
 	inline double TimeExact()					{ return m_time; }
 
 	inline float DrawTime()						{ return m_drawTime; }
+	inline float OnUpdateTime()					{ return m_onUpdateTimer->get(); }
+	inline float OnIdleTime()					{ return m_onIdleTimer->get(); }
+	inline float OnRenderTime()					{ return m_onRenderTimer->get(); }
 };
 
 }
