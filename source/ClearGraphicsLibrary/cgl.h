@@ -29,6 +29,7 @@
 #include <map>
 #include <iomanip>
 #include <algorithm>
+#include <fstream>
 
 #include <d3d11.h>
 #include <DXGI.h>	
@@ -68,5 +69,6 @@
 
 #include "CGLSprite.h"
 #include "CGLSpriteBatch.h"
+#include "CGLLabel.h"
 
 #endif // cgl_h__

@@ -49,6 +49,21 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////////
+// effect from file
+class CGL_API CD3D11EffectFromFile : public D3D11Effect
+{
+private:
+	std::string m_fileName;
+
+protected:
+	CD3D11EffectFromFile(std::string fileName);
+	HRESULT onRestore();
+
+public:
+	static PD3D11Effect Create(std::string fileName);
+};
+
+//////////////////////////////////////////////////////////////////////////
 // effect related object
 template <class T, class U>
 class CGL_API D3D11EffectObject : public CGLBase<U>

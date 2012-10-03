@@ -30,6 +30,11 @@ CGLSprite::CGLSprite()
 	m_pRenderTarget->Clear(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
+PCGLSprite CGLSprite::Create()
+{
+	return PCGLSprite(new CGLSprite());
+}
+
 void CGLSprite::SetWidth( float w )
 {
 	m_width = w;

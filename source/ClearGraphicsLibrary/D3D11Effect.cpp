@@ -35,11 +35,41 @@ cgl::CD3D11EffectFromMemory::CD3D11EffectFromMemory(void* pBuffer, SIZE_T size )
 }
 HRESULT cgl::CD3D11EffectFromMemory::onRestore( )
 {
-	return D3DX11CreateEffectFromMemory(m_pBuffer.get(), m_size, NULL, getDevice()->GetDevice(), ptr()); 
+	return D3DX11CreateEffectFromMemory(m_pBuffer.get(), m_size, NULL, Device(), ptr()); 
 }
 cgl::PD3D11Effect cgl::CD3D11EffectFromMemory::Create(void* pBuffer, SIZE_T size )
 {
 	return create<D3D11Effect>(new CD3D11EffectFromMemory(pBuffer, size));
+}
+
+//////////////////////////////////////////////////////////////////////////
+// d3d11 effect from file
+cgl::CD3D11EffectFromFile::CD3D11EffectFromFile( std::string fileName )
+	: D3D11Effect("CD3D11EffectFromFile"), m_fileName(fileName)
+{
+
+}
+cgl::PD3D11Effect cgl::CD3D11EffectFromFile::Create( std::string fileName )
+{
+	return create<D3D11Effect>(new CD3D11EffectFromFile(fileName));
+}
+HRESULT cgl::CD3D11EffectFromFile::onRestore()
+{
+	std::ifstream myfile;
+	int size = 0;
+	std::tr1::shared_ptr<char> pData = nullptr;
+
+	myfile.open (m_fileName.c_str(), std::ios::in|std::ios::binary|std::ios::ate);
+	if (!myfile.is_open())
+		return E_FAIL;
+
+	size = (int)myfile.tellg();
+	pData = std::tr1::shared_ptr<char>(new char[size]);
+	myfile.seekg(0, std::ios_base::beg);
+	myfile.read(pData.get(), size);
+	myfile.close();
+
+	return D3DX11CreateEffectFromMemory(pData.get(), size, NULL, Device(), ptr()); 
 }
 
 //////////////////////////////////////////////////////////////////////////

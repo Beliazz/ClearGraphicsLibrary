@@ -5,7 +5,7 @@ cgl::CGLGameLoop::CGLGameLoop( ICGLGameLoopEventHandler* pHandler, HWND window, 
 {
 	m_window = window;
 	m_fullSpeed = false;
-	m_pFrameSmoother = new Smoother<float>(5, updateInterval);
+	m_pFrameSmoother = new Smoother<float>(10, updateInterval);
 	m_quitting = false;
 	m_running = false;
 	m_time = 0.0;
@@ -57,9 +57,6 @@ void cgl::CGLGameLoop::Run()
 			m_pEvtHandler->OnRender(m_timeSmoothed, updateInterval);
 			m_onRenderTimer->Stop();
 
-			if(m_measureDrawTime)
-				m_gpuTimer->Stop();
-
 			drawn = true;
 			updated = false;
 		}
@@ -77,37 +74,42 @@ void cgl::CGLGameLoop::Run()
 				timeAccount -= updateInterval;
 			}
 			
+			// post update
+			m_pEvtHandler->OnPostUpdate(m_timeSmoothed, updateInterval);
+
 			// remove chunk
 			mgr()->Tidy();
 
-			// if the window was not visible previously
-			// perform a check if its still occluded
-			if (occluded)
-			{
-				HRESULT hResult = mgr()->GetDevice()->GetSwapChain()->Present(0, DXGI_PRESENT_TEST);
-				switch ( hResult )
-				{
-					// the device has been removed
-					// recreation of d3d11 objects needed
-				case DXGI_ERROR_DEVICE_REMOVED:
-				case DXGI_ERROR_DEVICE_RESET:
-					{
-						m_pEvtHandler->OnReset();
-						m_pEvtHandler->OnDeviceLost();
-					} break;
-
-				case S_OK:
-					{
-						// the window is visible again 
-						// -> resume rendering
-						m_pEvtHandler->OnRestore();
-						m_pEvtHandler->OnWindowShown();
-						occluded = false;
-					} break;
-				}
-			}
 
 			updated = true;
+		}
+
+		// if the window was not visible previously
+		// perform a check if its still occluded
+		if (occluded)
+		{
+			HRESULT hResult = mgr()->GetDevice()->GetSwapChain()->Present(0, DXGI_PRESENT_TEST);
+
+			switch ( hResult )
+			{
+				// the device has been removed
+				// recreation of d3d11 objects needed
+			case DXGI_ERROR_DEVICE_REMOVED:
+			case DXGI_ERROR_DEVICE_RESET:
+				{
+					m_pEvtHandler->OnReset();
+					m_pEvtHandler->OnDeviceLost();
+				} break;
+
+			case S_OK:
+				{
+					// the window is visible again 
+					// -> resume rendering
+					m_pEvtHandler->OnRestore();
+					m_pEvtHandler->OnWindowShown();
+					occluded = false;
+				} break;
+			}
 		}
 
 		// if the game was drawn
@@ -115,6 +117,10 @@ void cgl::CGLGameLoop::Run()
 		if (drawn)
 		{
 			HRESULT hResult = mgr()->GetDevice()->GetSwapChain()->Present(0, 0);
+
+			if(m_measureDrawTime)
+				m_gpuTimer->Stop();
+
 			switch ( hResult )
 			{
 				// the device has been removed
@@ -150,8 +156,8 @@ void cgl::CGLGameLoop::Run()
 		m_loopTimer->Stop();
 
 		m_elapsed = m_loopTimer->get();
-		m_time += m_loopTimer->get();
-		m_pFrameSmoother->Add(m_loopTimer->get());
+		m_time += m_elapsed;
+		m_pFrameSmoother->Add(m_elapsed);
 
 		// smoothed elapsed time
 		m_elapsedSmoothed = m_pFrameSmoother->GetSmoothed();
@@ -173,7 +179,7 @@ void cgl::CGLGameLoop::Run()
 void cgl::CGLGameLoop::SetUpdateInterval( float updateInterval )
 {
 	m_fixedFrameRate = updateInterval;
-	m_pFrameSmoother = new Smoother<float>(5, updateInterval);
+	m_pFrameSmoother = new Smoother<float>(10, updateInterval);
 }
 
 cgl::CGLGameLoop::~CGLGameLoop()

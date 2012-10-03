@@ -52,7 +52,8 @@ public:
 __interface CGL_API ICGLGameLoopEventHandler
 {
 	void OnRender(double dTime, float fElapsed);
-	bool OnUpdate(double dTime, float fElapsed);
+	void OnUpdate(double dTime, float fElapsed);
+	void OnPostUpdate(double dTime, float fElapsed);
 	void OnIdle();
 	void OnReset();
 	void OnRestore();
@@ -105,6 +106,9 @@ public:
 	inline float ElapsedTimeExact()				{ return m_elapsed; }
 	inline double Time()						{ return m_timeSmoothed; }
 	inline double TimeExact()					{ return m_time; }
+
+	inline float FPSExact()						{ return 1.0f / m_elapsed;}
+	inline float FPS()							{ return 1.0f / m_elapsedSmoothed;}
 
 	inline float DrawTime()						{ return m_gpuTimer->get(); }
 	inline float OnUpdateTime()					{ return m_onUpdateTimer->get(); }

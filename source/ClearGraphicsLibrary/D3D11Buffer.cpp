@@ -30,6 +30,9 @@ void cgl::CD3D11Buffer::onReset()
 
 bool cgl::CD3D11Buffer::Update()
 {
+	if (GetDataSize() == 0)
+		return false;
+
 	if (GetDataSize() != GetBufferSize())
 	{
 		reset();

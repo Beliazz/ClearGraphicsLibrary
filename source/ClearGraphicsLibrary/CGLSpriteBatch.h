@@ -38,7 +38,6 @@ namespace cgl
 			static PCGLSpriteBatch Create(cgl::PD3D11Effect pEffect);
 
 			bool Init();
-			void Exit();
 
 			void AddSprite(std::tr1::shared_ptr<CGLSprite> pSprite);
 			void RemoveSprite(UINT index);
