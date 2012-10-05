@@ -53,7 +53,7 @@ __interface CGL_API ICGLGameLoopEventHandler
 {
 	void OnRender(double dTime, float fElapsed);
 	void OnUpdate(double dTime, float fElapsed);
-	void OnPostUpdate(double dTime, float fElapsed);
+	void OnPostUpdate(double dTime);
 	void OnIdle();
 	void OnReset();
 	void OnRestore();

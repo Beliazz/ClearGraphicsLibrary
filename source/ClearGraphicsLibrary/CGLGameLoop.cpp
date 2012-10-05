@@ -75,7 +75,7 @@ void cgl::CGLGameLoop::Run()
 			}
 			
 			// post update
-			m_pEvtHandler->OnPostUpdate(m_timeSmoothed, updateInterval);
+			m_pEvtHandler->OnPostUpdate(m_timeSmoothed);
 
 			// remove chunk
 			mgr()->Tidy();
