@@ -12,7 +12,7 @@ namespace cgl
 		typedef std::tr1::shared_ptr<CGLSpriteBatch> PCGLSpriteBatch;
 
 		class CGLSprite;
-		class CGLSpriteBatch
+		class CGL_API CGLSpriteBatch
 		{
 		private:
 			std::vector<std::tr1::shared_ptr<CGLSprite>> m_sprites;

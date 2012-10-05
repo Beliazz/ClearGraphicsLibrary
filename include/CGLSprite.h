@@ -27,7 +27,7 @@ namespace cgl
 			}
 		};
 
-		class CGLSprite : public cgl::CGLManagerConnector
+		class CGL_API CGLSprite : public cgl::CGLManagerConnector
 		{
 		private:	
 			float m_x;
