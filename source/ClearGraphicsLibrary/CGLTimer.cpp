@@ -1,16 +1,21 @@
 #include "cgl.h"
 
+// cgl timer
+cgl::CGLTimer::~CGLTimer()
+{
+	CGLTimerDatabase::Get()->DeleteTimer(m_name);
+}
+
 // cpu timer
-cgl::CGLCpuTimer::CGLCpuTimer()
-	: CGLTimer(), m_start(0), m_end(0)
+cgl::CGLCpuTimer::CGLCpuTimer(std::string name)
+	: CGLTimer(name), m_start(0), m_end(0)
 {
 	QueryPerformanceFrequency((LARGE_INTEGER*)&m_frequency); 
 }
-cgl::PCGLTimer cgl::CGLCpuTimer::Create()
+cgl::PCGLTimer cgl::CGLCpuTimer::Create(std::string name)
 {
-	return cgl::PCGLTimer(new cgl::CGLCpuTimer());
+	return _register(cgl::PCGLTimer(new cgl::CGLCpuTimer(name)));
 }
-
 void cgl::CGLCpuTimer::Start()
 {
 	QueryPerformanceCounter((LARGE_INTEGER*)&m_start);
@@ -18,11 +23,16 @@ void cgl::CGLCpuTimer::Start()
 void cgl::CGLCpuTimer::Stop()
 {
 	QueryPerformanceCounter((LARGE_INTEGER*)&m_end);
-	set((m_end-m_start) / (float)m_frequency);
+	_set((m_end-m_start) / (float)m_frequency);
+}
+cgl::CGLCpuTimer::~CGLCpuTimer()
+{
+	
 }
 
 // gpu timer
-cgl::CGLGpuTimer::CGLGpuTimer()
+cgl::CGLGpuTimer::CGLGpuTimer(std::string name)
+	: CGLTimer(name)
 {
 	D3D11_QUERY_DESC timeQueryDesc;
 	ZeroMemory(&timeQueryDesc, sizeof(timeQueryDesc));
@@ -36,11 +46,10 @@ cgl::CGLGpuTimer::CGLGpuTimer()
 	m_pDisjointQuery = cgl::CD3D11Query::Create(disjointQueryDesc);
 	CGL_RESTORE(m_pDisjointQuery);
 }
-cgl::PCGLTimer cgl::CGLGpuTimer::Create()
+cgl::PCGLTimer cgl::CGLGpuTimer::Create(std::string name)
 {
-	return cgl::PCGLTimer(new cgl::CGLGpuTimer());
+	return _register(cgl::PCGLTimer(new cgl::CGLGpuTimer(name)));
 }
-
 void cgl::CGLGpuTimer::Start()
 {
 	Context()->Begin(m_pDisjointQuery->get());
@@ -63,11 +72,54 @@ void cgl::CGLGpuTimer::Stop()
 	{
 		// query data is valid
 		// calculate time in seconds
-		set((m_end - m_start) / (float)disjointData.Frequency);
+		_set((m_end - m_start) / (float)disjointData.Frequency);
 	} 
 	else
 	{
-		set(-1.0f);
+		_set(-1.0f);
 	}
 }
+
+// timer database
+cgl::CGLTimerDatabase* cgl::CGLTimerDatabase::Get()
+{
+	static CGLTimerDatabase dataBase;
+	return &dataBase;
+}
+void cgl::CGLTimerDatabase::AddTimer( PCGLTimer pTimer )
+{
+	auto it = m_timer.find(pTimer->getName());
+	if (it != m_timer.end())
+	{
+		it->second = pTimer;
+	}
+	else
+	{
+		m_timer.insert(make_pair(pTimer->getName(), pTimer));
+	}
+}
+void cgl::CGLTimerDatabase::DeleteTimer( std::string name )
+{
+	auto it = m_timer.find(name);
+	if (it != m_timer.end())
+	{
+		m_timer.erase(it);
+	}
+}
+cgl::PCGLTimer cgl::CGLTimerDatabase::GetTimer( std::string name )
+{
+	auto it = m_timer.find(name);
+	if (it != m_timer.end())
+	{
+		return it->second;
+	}
+
+	return NULL;
+}
+cgl::PCGLTimer cgl::CGLTimer::_register( PCGLTimer pTimer )
+{
+	CGLTimerDatabase::Get()->AddTimer(pTimer);
+	return pTimer;
+}
+
 

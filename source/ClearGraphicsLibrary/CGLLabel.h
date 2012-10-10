@@ -18,7 +18,7 @@ namespace cgl
 			std::tr1::shared_ptr<CGLSprite>			m_pSprite;
 			std::tr1::shared_ptr<CGLSpriteBatch>	m_pSpriteBatch;
 			PD3D11Effect	m_pEffect;
-			std::wstring	m_text;
+			std::string		m_text;
 			cgl::PCGLRenderTargetViewCollection m_pRenderTargetCollection;
 			bool m_bChanged;
 
@@ -27,13 +27,15 @@ namespace cgl
 			virtual HRESULT onRestore();
 			virtual void getDependencies( std::vector<PCGLObject>* pDependencies ) { pDependencies->push_back(m_pEffect); }
 
-			virtual void RenderText(std::wstring text) PURE;
+			virtual void RenderText(std::string text) PURE;
 
 			CGLLabel(PD3D11Effect pEffect, int width, int height);
+
 		public:
 			void SetX(float x);
 			void SetY(float y);
-			void SetText(std::wstring text);
+
+			void SetText(std::string text);
 
 			float GetX();
 			float GetY();

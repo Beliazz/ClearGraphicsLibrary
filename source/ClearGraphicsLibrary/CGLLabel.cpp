@@ -7,7 +7,7 @@ cgl::drawing::CGLLabel::CGLLabel( PD3D11Effect pEffect, int width, int height )
 
 	m_pSprite->SetWidth((float)width);
 	m_pSprite->SetHeight((float)height);
-
+	
 	m_pSpriteBatch = CGLSpriteBatch::Create(m_pEffect);
 	m_pSpriteBatch->AddSprite(m_pSprite);
 }
@@ -81,15 +81,6 @@ void cgl::drawing::CGLLabel::SetY( float y )
 	m_pSprite->SetY(y);
 }
 
-void cgl::drawing::CGLLabel::SetText( std::wstring text )
-{
-	if (text != m_text)
-	{
-		m_text = text;
-		m_bChanged = true;
-	}
-}
-
 float cgl::drawing::CGLLabel::GetX()
 {
 	return m_pSprite->GetX();
@@ -108,4 +99,13 @@ float cgl::drawing::CGLLabel::GetWidth()
 float cgl::drawing::CGLLabel::GetHeight()
 {
 	return m_pSprite->GetHeight();
+}
+
+void cgl::drawing::CGLLabel::SetText( std::string text )
+{
+	if (text != m_text)
+	{
+		m_text = text;
+		m_bChanged = true;
+	}
 }

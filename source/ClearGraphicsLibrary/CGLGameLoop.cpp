@@ -13,11 +13,11 @@ cgl::CGLGameLoop::CGLGameLoop( ICGLGameLoopEventHandler* pHandler, HWND window, 
 	m_elapsed = 0.0f;
 	m_elapsedSmoothed = 0.0f;
 
-	m_gpuTimer = CGLGpuTimer::Create();
-	m_onUpdateTimer = CGLCpuTimer::Create();
-	m_loopTimer = CGLCpuTimer::Create();
-	m_onIdleTimer = CGLCpuTimer::Create();
-	m_onRenderTimer = CGLCpuTimer::Create();
+	m_gpuTimer = CGLGpuTimer::Create("CGLGameLoop::DrawTime");
+	m_onUpdateTimer = CGLCpuTimer::Create("CGLGameLoop::OnUpdate");
+	m_loopTimer = CGLCpuTimer::Create("CGLGameLoop::Loop");
+	m_onIdleTimer = CGLCpuTimer::Create("CGLGameLoop::OnIdle");
+	m_onRenderTimer = CGLCpuTimer::Create("CGLGameLoop::OnRender");
 
 	m_measureDrawTime = false;
 }
