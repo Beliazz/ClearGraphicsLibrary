@@ -29,7 +29,9 @@ protected:
 
 	HRESULT onRestore();
 	void onReset();
+	virtual void onParamUpdate() {}
 	virtual void getDependencies(std::vector<PCGLObject>* pDependencies ) { }
+
 	CD3D11Buffer(UINT elementSize, D3D11_BUFFER_DESC desc);
 
 public:
@@ -43,7 +45,7 @@ public:
 	// vector do not match restore() and Update() will fail
 	static PD3D11Buffer Create(UINT elementSize, D3D11_BUFFER_DESC desc);
 
-	bool Update();
+	inline bool Update() { return restore(); }
 
 	inline std::vector<char>*	Data()	{ return &m_data;}
 	UINT SetData(char* pData, size_t count );
@@ -61,15 +63,15 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 // vertex buffer
-class CGL_API CD3D11VertexBuffer : public CD3D11Buffer
+class CGL_API CD3D11VertexBuffer : public CD3D11Buffer, public CGLVertexBufferBindable
 {	
 protected:
 	CD3D11VertexBuffer(UINT stride, D3D11_USAGE usage, UINT cpuAccessFlags, UINT miscFlags);
+	void onParamUpdate();
 
 public:
 	static PD3D11VertexBuffer Create(UINT stride, D3D11_USAGE usage, UINT cpuAccessFlags = 0, UINT miscFlags = 0);
 
-	void Bind(UINT slot = 0, UINT offset = 0);
 	void Draw();
 	void Draw(UINT offset);
 	void Draw(UINT offset, UINT count);
@@ -77,17 +79,17 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 // index buffer
-class CGL_API CD3D11IndexBuffer : public CD3D11Buffer
+class CGL_API CD3D11IndexBuffer :  public CD3D11Buffer, public CGLIndexBufferBindable
 {
 protected:
 	CD3D11IndexBuffer(UINT elementSize, D3D11_USAGE usage = D3D11_USAGE_DEFAULT, UINT cpuAccessFlags = 0, UINT miscFlags = 0);
+	void onParamUpdate();
 
 public:
 	static PD3D11IndexBuffer Create(UINT elementSize, D3D11_USAGE usage = D3D11_USAGE_DEFAULT, UINT cpuAccessFlags = 0, UINT miscFlags = 0);
 	void Draw();
 	void Draw(UINT indexCount, UINT vertexOffset);
 	void Draw(UINT indexOffset, UINT indexCount, UINT vertexOffset);
-	void Bind(UINT offset = 0);
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -100,7 +102,7 @@ protected:
 public:
 	// element size = struct size
 	static PD3D11ConstantBuffer Create(UINT elementSize, D3D11_USAGE usage = D3D11_USAGE_DEFAULT, UINT cpuAccessFlags = 0, UINT miscFlags = 0);
-	void Bind(CGL_SHADER_STAGE stage, UINT slot = 0);
+	void Bind(PD3D11EffectVariable pVar);
 };
 
 }

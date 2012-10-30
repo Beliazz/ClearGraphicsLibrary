@@ -1,5 +1,4 @@
-#ifndef CGLDataProvider_h__
-#define CGLDataProvider_h__
+#pragma once
 
 #include "cgl.h"
 
@@ -36,5 +35,4 @@ __interface CGL_API ICGLInputProcessorDataProvider
 
 }
 
-#endif // CGLDataProvider_h__
 

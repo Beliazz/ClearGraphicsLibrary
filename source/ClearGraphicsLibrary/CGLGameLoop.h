@@ -94,7 +94,7 @@ public:
 	void Run();
 
 	void SetUpdateInterval(float updateInterval);
-	void EnableDrawTimeMeasurement(bool enable)	{ m_measureDrawTime = enable; }
+	void EnableDrawTimeMeasurement(bool enable);
 
 	inline float UpdateInterval()				{ return m_fixedFrameRate; }
 	inline void EnableFullSpeed(bool enable)	{ m_fullSpeed = enable; }

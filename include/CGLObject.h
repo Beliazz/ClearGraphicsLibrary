@@ -23,8 +23,6 @@ class CGLObject;
 typedef CGL_API std::tr1::shared_ptr<CGLObject> PCGLObject;
 typedef CGL_API std::list<PCGLObject> PCGLObjectList;
 
-#define DUMP_VAR(type, name) struct __ident_##name { char identifier[64]; __ident_##name () { char tmp[64] = #name "\0"; strcpy(identifier, tmp); }; }; __ident_##name _##name##_; type name;
-
 //////////////////////////////////////////////////////////////////////////
 // cgl manager connector
 class CGLManager;
@@ -37,9 +35,16 @@ private:
 public:
 	CGLManagerConnector();
 	inline CGLManager* mgr() { return m_pMgr; }
-	ID3D11DeviceContext* Context();
+	inline ID3D11DeviceContext* Context();
 	ID3D11Device* Device();
 	IDXGISwapChain* SwapChain();
+};
+
+//////////////////////////////////////////////////////////////////////////
+// cgl object feature set
+enum CGL_OBJECT_FEATURES
+{
+	CGL_OBJECT_BIND_FEATURE
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -50,6 +55,9 @@ class CGL_API CGLObject : protected CGLManagerConnector
 friend class CGLManager;
 friend class CGLLogger;
 
+template <class T>
+friend class CGLTypedBindable;
+
 private:
 	UINT m_luid;
 	std::string m_typeName;
@@ -57,6 +65,7 @@ private:
 	std::string m_currRestoreFile;
 	std::string m_currRestoreFunc;
 	long m_currRestoreLine;
+	UINT m_featureFlags;
 
 	bool m_restored;
 	bool m_processing;
@@ -90,18 +99,23 @@ protected:
 	
 	virtual std::string toStringSpecific(std::string indent) { return ""; }
 
+	inline void setFeatureFlags(UINT flags) { m_featureFlags = flags; }
+	inline void addFeatureFlag(CGL_OBJECT_FEATURES flag) { m_featureFlags |= 1 << flag; }
+	inline void delFeatureFlag(CGL_OBJECT_FEATURES flag) { m_featureFlags &= ~(1 << flag); }
+
 public:
 	inline UINT getLuid()				{ return m_luid; }
 	inline std::string getTypeName()	{ return m_typeName; }	
 	inline bool isRestored()			{ return m_restored; }
-	std::tr1::shared_ptr<D3D11Device> getDevice();
+	inline UINT getFeatureFlags()		{ return m_featureFlags; }
+
+	std::tr1::shared_ptr<cgl::D3D11Device> getDevice();
 	
 	void setName(std::string name);
 	std::string getName();
 
 	bool restoreDbg(std::string file, std::string function, long line);
 	bool restore();
-
 	void reset();
 
 	std::string toString(std::string indent = "");

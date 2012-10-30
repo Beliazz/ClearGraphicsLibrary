@@ -17,7 +17,7 @@ protected:
 	CGLTimer(std::string name) : m_elapsed(0.0f), m_name(name) {};
 
 	void _set(float elapsed) { m_elapsed = elapsed; }
-	static PCGLTimer _register(PCGLTimer timer);
+	static CGLTimer* _register(CGLTimer* timer);
 
 public:
 	virtual ~CGLTimer();
@@ -31,27 +31,27 @@ public:
 class CGL_API CGLTimerDatabase
 {
 private:
-	std::map<std::string, PCGLTimer> m_timer;
+	std::map<std::string, CGLTimer*> m_timer;
 	CGLTimerDatabase() { }
 
 public:
 	static CGLTimerDatabase* Get();
 
-	void AddTimer(PCGLTimer pTimer);
+	void AddTimer(CGLTimer* pTimer);
 	void DeleteTimer( std::string name );
-	PCGLTimer GetTimer(std::string name);
+	CGLTimer* GetTimer(std::string name);
 
-	inline std::map<std::string, PCGLTimer>& GetTimers() { return m_timer; }
+	inline std::map<std::string, CGLTimer*>& GetTimers() { return m_timer; }
 };
 class CGL_API CGLTimerReport
 {
 private:
-	std::map<std::string, PCGLTimer> m_timer;
+	std::map<std::string, CGLTimer*> m_timer;
 
 public:
 	CGLTimerReport() : m_timer(CGLTimerDatabase::Get()->GetTimers()) { }
-	inline std::map<std::string, PCGLTimer>* operator ->()	{ return &m_timer; }
-	inline std::map<std::string, PCGLTimer>* operator *()	{ return &m_timer; }
+	inline std::map<std::string, CGLTimer*>* operator ->()	{ return &m_timer; }
+	inline std::map<std::string, CGLTimer*>* operator *()	{ return &m_timer; }
 };
 
 class CGL_API CGLCpuTimer : public CGLTimer
@@ -66,7 +66,6 @@ protected:
 
 public:
 	static PCGLTimer Create(std::string name);
-	~CGLCpuTimer();
 
 	void Start();
 	void Stop();
@@ -82,8 +81,10 @@ class CGL_API CGLGpuTimer : public CGLTimer, public CGLManagerConnector
 protected:
 	CGLGpuTimer(std::string name);
 
+
 public:
 	static PCGLTimer Create(std::string name);
+	~CGLGpuTimer() { }
 
 	void Start();
 	void Stop();

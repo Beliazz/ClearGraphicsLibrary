@@ -80,7 +80,7 @@ void cgl::CGLObject::comReset(IUnknown** ppComPtr )
 		}
 	}
 }
-cgl::PD3D11Device cgl::CGLObject::getDevice()
+std::tr1::shared_ptr<cgl::D3D11Device> cgl::CGLObject::getDevice()
 {
 	return mgr()->GetDevice();
 }

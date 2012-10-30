@@ -56,7 +56,7 @@ protected:
 
 public:
 	static PD3D11ShaderResourceView Create(PD3D11Resource pResource);
-	void Bind(CGL_SHADER_STAGE stage, UINT slot);
+	void Bind(PD3D11EffectVariable& pVar);
 };
 
 //////////////////////////////////////////////////////////////////////////

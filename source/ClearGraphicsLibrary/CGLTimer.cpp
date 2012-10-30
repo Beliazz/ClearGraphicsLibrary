@@ -14,7 +14,7 @@ cgl::CGLCpuTimer::CGLCpuTimer(std::string name)
 }
 cgl::PCGLTimer cgl::CGLCpuTimer::Create(std::string name)
 {
-	return _register(cgl::PCGLTimer(new cgl::CGLCpuTimer(name)));
+	return cgl::PCGLTimer(_register(new cgl::CGLCpuTimer(name)));
 }
 void cgl::CGLCpuTimer::Start()
 {
@@ -24,10 +24,6 @@ void cgl::CGLCpuTimer::Stop()
 {
 	QueryPerformanceCounter((LARGE_INTEGER*)&m_end);
 	_set((m_end-m_start) / (float)m_frequency);
-}
-cgl::CGLCpuTimer::~CGLCpuTimer()
-{
-	
 }
 
 // gpu timer
@@ -48,7 +44,7 @@ cgl::CGLGpuTimer::CGLGpuTimer(std::string name)
 }
 cgl::PCGLTimer cgl::CGLGpuTimer::Create(std::string name)
 {
-	return _register(cgl::PCGLTimer(new cgl::CGLGpuTimer(name)));
+	return cgl::PCGLTimer(_register(new cgl::CGLGpuTimer(name)));
 }
 void cgl::CGLGpuTimer::Start()
 {
@@ -86,7 +82,7 @@ cgl::CGLTimerDatabase* cgl::CGLTimerDatabase::Get()
 	static CGLTimerDatabase dataBase;
 	return &dataBase;
 }
-void cgl::CGLTimerDatabase::AddTimer( PCGLTimer pTimer )
+void cgl::CGLTimerDatabase::AddTimer( CGLTimer* pTimer )
 {
 	auto it = m_timer.find(pTimer->getName());
 	if (it != m_timer.end())
@@ -106,7 +102,7 @@ void cgl::CGLTimerDatabase::DeleteTimer( std::string name )
 		m_timer.erase(it);
 	}
 }
-cgl::PCGLTimer cgl::CGLTimerDatabase::GetTimer( std::string name )
+cgl::CGLTimer* cgl::CGLTimerDatabase::GetTimer( std::string name )
 {
 	auto it = m_timer.find(name);
 	if (it != m_timer.end())
@@ -116,7 +112,7 @@ cgl::PCGLTimer cgl::CGLTimerDatabase::GetTimer( std::string name )
 
 	return NULL;
 }
-cgl::PCGLTimer cgl::CGLTimer::_register( PCGLTimer pTimer )
+cgl::CGLTimer* cgl::CGLTimer::_register( CGLTimer* pTimer )
 {
 	CGLTimerDatabase::Get()->AddTimer(pTimer);
 	return pTimer;

@@ -81,16 +81,9 @@ cgl::CD3D11ShaderResourceView::CD3D11ShaderResourceView( PD3D11Resource pResourc
 {
 
 }
-void cgl::CD3D11ShaderResourceView::Bind(CGL_SHADER_STAGE stage, UINT slot)
-{
-	switch(stage)
-	{
-	case CGL_SHADER_STAGE_VERTEX: 	getDevice()->GetContext()->VSSetShaderResources(slot, 1, ptr()); break;
-	case CGL_SHADER_STAGE_PIXEL: 	getDevice()->GetContext()->PSSetShaderResources(slot, 1, ptr()); break;
-	case CGL_SHADER_STAGE_GEOMETRY: getDevice()->GetContext()->GSSetShaderResources(slot, 1, ptr()); break;
-	case CGL_SHADER_STAGE_HULL: 	getDevice()->GetContext()->HSSetShaderResources(slot, 1, ptr()); break;
-	case CGL_SHADER_STAGE_DOMAIN: 	getDevice()->GetContext()->DSSetShaderResources(slot, 1, ptr()); break;
-	}
+void cgl::CD3D11ShaderResourceView::Bind(PD3D11EffectVariable& pVar)
+{	
+	pVar->get()->AsShaderResource()->SetResource(get());
 }
 std::tr1::shared_ptr<cgl::CD3D11ShaderResourceView> cgl::CD3D11ShaderResourceView::Create( PD3D11Resource pResource )
 {

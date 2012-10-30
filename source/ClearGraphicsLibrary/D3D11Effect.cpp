@@ -205,6 +205,12 @@ cgl::D3D11EffectVariable::~D3D11EffectVariable()
 {
 	onReset();
 }
+bool cgl::D3D11EffectVariable::CheckType( D3D10_SHADER_VARIABLE_TYPE type )
+{
+	D3DX11_EFFECT_TYPE_DESC desc;
+	get()->GetType()->GetDesc(&desc);
+	return (desc.Type == type);
+}
 
 //////////////////////////////////////////////////////////////////////////
 // d3d11 effect variable from name

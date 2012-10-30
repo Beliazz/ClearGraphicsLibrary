@@ -3,7 +3,9 @@
 //////////////////////////////////////////////////////////////////////////
 // d3d11 device
 cgl::D3D11Device::D3D11Device( std::string className ) : CGLBase(className)
-{ }
+{
+	m_bindRegistry.resize(CGL_BIND_UNUSED);
+}
 void cgl::D3D11Device::onReset()
 {
 	if (!get())
@@ -49,6 +51,15 @@ bool cgl::D3D11Device::Register( PD3D11Device pDevice )
 			return true;
 
 	return false;
+}
+void cgl::D3D11Device::Bind( CGLBindable* pBindable )
+{
+	if (!pBindable->valid() || m_bindRegistry[static_cast<int>(pBindable->getBind())] != pBindable->getBindId())
+	{
+		pBindable->bind();
+		pBindable->validate();
+		m_bindRegistry[static_cast<int>(pBindable->getBind())] = pBindable->getBindId();
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -1,5 +1,4 @@
-#ifndef CGLShaderInputRegistry_h__
-#define CGLShaderInputRegistry_h__
+#pragma once
 
 #include "cgl.h"
 
@@ -20,5 +19,3 @@ __interface CGL_API ICGLInstancing
 };
 
 }
-
-#endif // CGLShaderInputRegistry_h__

@@ -20,6 +20,7 @@ struct CGL_API CGL_D3D11_DEVICE
 	IDXGISwapChain* pSwapChain;
 
 	CGL_D3D11_DEVICE() : pDevice(NULL), pContext(NULL), pSwapChain(NULL) { }
+
 };
 class CGL_API D3D11Device : public CGLBase<CGL_D3D11_DEVICE>
 {
@@ -32,12 +33,17 @@ protected:
 	void getDependencies(std::vector<PCGLObject>* pDependencies ) { }
 	static bool Register(PD3D11Device pDevice);
 
+	std::vector<UINT> m_bindRegistry;
+
 public:
 	virtual ~D3D11Device() { onReset(); }
 
-	ID3D11DeviceContext* GetContext()	{ return get()->pContext;}
-	ID3D11Device*		 GetDevice()	{ return get()->pDevice;}
+	ID3D11DeviceContext* GetContext()	{ return get()->pContext;  }
+	ID3D11Device*		 GetDevice()	{ return get()->pDevice;   }
 	IDXGISwapChain*		 GetSwapChain()	{ return get()->pSwapChain;}
+
+	void Bind(CGLBindable* pBindable);
+	UINT GetCurrentlyBoundObject(CGL_BIND type) { return m_bindRegistry[static_cast<int>(type)]; }
 };
 
 //////////////////////////////////////////////////////////////////////////

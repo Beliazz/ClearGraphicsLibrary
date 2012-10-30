@@ -19,7 +19,7 @@ cgl::CGLGameLoop::CGLGameLoop( ICGLGameLoopEventHandler* pHandler, HWND window, 
 	m_onIdleTimer = CGLCpuTimer::Create("CGLGameLoop::OnIdle");
 	m_onRenderTimer = CGLCpuTimer::Create("CGLGameLoop::OnRender");
 
-	m_measureDrawTime = false;
+	m_measureDrawTime = true;
 }
 
 void cgl::CGLGameLoop::Run()
@@ -78,7 +78,7 @@ void cgl::CGLGameLoop::Run()
 			m_pEvtHandler->OnPostUpdate(m_timeSmoothed);
 
 			// remove chunk
-			mgr()->Tidy();
+			// mgr()->Tidy();
 
 
 			updated = true;
@@ -185,5 +185,21 @@ void cgl::CGLGameLoop::SetUpdateInterval( float updateInterval )
 cgl::CGLGameLoop::~CGLGameLoop()
 {
 	SAFE_DELETE(m_pFrameSmoother);
+}
+
+void cgl::CGLGameLoop::EnableDrawTimeMeasurement( bool enable )
+{
+	if (enable != m_measureDrawTime)
+	{
+		m_measureDrawTime = enable;	
+		if (!m_measureDrawTime)
+		{
+			m_gpuTimer.reset();
+		}
+		else
+		{
+			m_gpuTimer = CGLGpuTimer::Create("CGLGameLoop::DrawTime");
+		}	
+	}
 }
 

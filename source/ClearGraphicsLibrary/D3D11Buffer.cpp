@@ -13,67 +13,55 @@ cgl::CD3D11Buffer::~CD3D11Buffer()
 }
 HRESULT cgl::CD3D11Buffer::onRestore()
 {
+	if (GetDataSize() == 0)
+		return false;
+
 	m_desc.ByteWidth = m_data.size();
 	m_desc.StructureByteStride = m_stride;
 
 	D3D11_SUBRESOURCE_DATA initData;
 	initData.pSysMem = m_data.data();
 
-	HRESULT result = getDevice()->GetDevice()->CreateBuffer(&m_desc, &initData, ptr());
+	// bind param update
+	onParamUpdate();
 
-	return result;
+	if (get())
+	{
+		switch (m_desc.Usage)
+		{
+		case D3D11_USAGE_DEFAULT:
+			{
+				getDevice()->GetContext()->UpdateSubresource(get(), 0, NULL, m_data.data(), 0, 0);
+				return S_OK;
+
+			} break;
+
+		case D3D11_USAGE_DYNAMIC:
+			{
+				D3D11_MAPPED_SUBRESOURCE subresource;
+				HRESULT result = getDevice()->GetContext()->Map(get(), 0, D3D11_MAP_WRITE_DISCARD, NULL, &subresource );
+				if (SUCCEEDED(result))
+				{
+					memcpy(subresource.pData, m_data.data(), m_data.size());
+					getDevice()->GetContext()->Unmap(get(), 0);
+
+					return S_OK;
+				}
+
+				return E_FAIL;
+
+			} break;
+
+		default:
+			reset();
+		}
+	}
+
+	return getDevice()->GetDevice()->CreateBuffer(&m_desc, &initData, ptr());
 }
 void cgl::CD3D11Buffer::onReset()
 {
 	comReset((IUnknown**)ptr());
-}
-
-bool cgl::CD3D11Buffer::Update()
-{
-	if (GetDataSize() == 0)
-		return false;
-
-	if (GetDataSize() != GetBufferSize())
-	{
-		reset();
-		return restore();
-	}
-
-	switch(m_desc.Usage)
-	{
-	case D3D11_USAGE_DEFAULT:
-		{
-			getDevice()->GetContext()->UpdateSubresource(get(), 0, NULL, m_data.data(), 0, 0);
-			return true;
-
-		} break;
-
-	case D3D11_USAGE_IMMUTABLE:
-	case D3D11_USAGE_STAGING:	
-		{
-			reset();
-			return restore();
-
-		} break;
-
-	case D3D11_USAGE_DYNAMIC:
-		{
-			D3D11_MAPPED_SUBRESOURCE subresource;
-			HRESULT result = getDevice()->GetContext()->Map(get(), 0, D3D11_MAP_WRITE_DISCARD, NULL, &subresource );
-			if (SUCCEEDED(result))
-			{
-				memcpy(subresource.pData, m_data.data(), m_data.size());
-				getDevice()->GetContext()->Unmap(get(), 0);
-
-				return true;
-			}
-			
-			return false;
-
-		} break;		
-	}
-
-	return false;
 }
 size_t cgl::CD3D11Buffer::GetDataSize()
 {
@@ -81,14 +69,7 @@ size_t cgl::CD3D11Buffer::GetDataSize()
 }
 size_t cgl::CD3D11Buffer::GetBufferSize()
 {
-	if(get())
-	{
-		D3D11_BUFFER_DESC desc;
-		get()->GetDesc(&desc);
-		return desc.ByteWidth;
-	}
-
-	return 0;
+	return m_desc.ByteWidth;
 }
 cgl::PD3D11Buffer cgl::CD3D11Buffer::Create( UINT elementSize, D3D11_BUFFER_DESC desc )
 {
@@ -109,7 +90,7 @@ UINT cgl::CD3D11Buffer::SetData( char* pData, size_t count )
 	// base index
 	return 0;
 }
-UINT  cgl::CD3D11Buffer::AddData( char* pData )
+UINT cgl::CD3D11Buffer::AddData( char* pData )
 {
 	UINT start = m_data.size();
 	m_data.resize(m_data.size() + m_stride);
@@ -136,18 +117,15 @@ void cgl::CD3D11Buffer::ResetData()
 //////////////////////////////////////////////////////////////////////////
 // d3d11 vertex buffer
 cgl::CD3D11VertexBuffer::CD3D11VertexBuffer(UINT stride, D3D11_USAGE usage, UINT cpuAccessFlags, UINT miscFlags ) 
-	: CD3D11Buffer(stride, CD3D11_BUFFER_DESC(0, D3D11_BIND_VERTEX_BUFFER, usage, cpuAccessFlags, miscFlags ))
+	: CD3D11Buffer(stride, CD3D11_BUFFER_DESC(0, D3D11_BIND_VERTEX_BUFFER, usage, cpuAccessFlags, miscFlags )), CGLVertexBufferBindable(this)
 {
-
+	SetParam<UINT>(CGLVertexBufferBindable::BindParamStride, 1);
+	SetParam<UINT>(CGLVertexBufferBindable::BindParamOffset, 0);
+	SetParam<UINT>(CGLVertexBufferBindable::BindParamSlot, 0);
 }
 cgl::PD3D11VertexBuffer cgl::CD3D11VertexBuffer::Create(UINT stride, D3D11_USAGE usage /*= D3D11_USAGE_DEFAULT*/, UINT cpuAccessFlags /*= 0*/, UINT miscFlags /*= 0*/ )
 {
 	return create<CD3D11VertexBuffer>(new CD3D11VertexBuffer(stride, usage, cpuAccessFlags, miscFlags));
-}
-void cgl::CD3D11VertexBuffer::Bind(UINT slot, UINT offset)
-{
-	UINT stride = GetStride();
-	getDevice()->GetContext()->IASetVertexBuffers(slot, 1, ptr(), &stride, &offset );
 }
 void cgl::CD3D11VertexBuffer::Draw( UINT offset, UINT count)
 {
@@ -161,22 +139,22 @@ void cgl::CD3D11VertexBuffer::Draw( UINT offset )
 {
 	Draw(offset, m_desc.ByteWidth / m_stride);
 }
+void cgl::CD3D11VertexBuffer::onParamUpdate()
+{
+	SetParam<UINT>(CGLVertexBufferBindable::BindParamStride, GetStride());
+}
 
 //////////////////////////////////////////////////////////////////////////
 // d3d11 index buffer
 cgl::CD3D11IndexBuffer::CD3D11IndexBuffer( UINT elementSize, D3D11_USAGE usage /*= D3D11_USAGE_DEFAULT*/, UINT cpuAccessFlags /*= 0*/, UINT miscFlags /*= 0*/ )
-	: CD3D11Buffer(elementSize, CD3D11_BUFFER_DESC(0, D3D11_BIND_INDEX_BUFFER, usage, cpuAccessFlags, miscFlags, elementSize ))
+	: CD3D11Buffer(elementSize, CD3D11_BUFFER_DESC(0, D3D11_BIND_INDEX_BUFFER, usage, cpuAccessFlags, miscFlags, elementSize )), CGLIndexBufferBindable(this)
 {
-
+	SetParam<DXGI_FORMAT>(CGLIndexBufferBindable::BindParamFormat, DXGI_FORMAT_R32_UINT);
+	SetParam<UINT>(CGLIndexBufferBindable::BindParamOffset, 0);
 }
-void cgl::CD3D11IndexBuffer::Bind(UINT offset)
+std::tr1::shared_ptr<cgl::CD3D11IndexBuffer> cgl::CD3D11IndexBuffer::Create( UINT elementSize, D3D11_USAGE usage /*= D3D11_USAGE_DEFAULT*/, UINT cpuAccessFlags /*= 0*/, UINT miscFlags /*= 0*/ )
 {
-	switch(GetStride())
-	{
-	case sizeof(DWORD): getDevice()->GetContext()->IASetIndexBuffer(get(), DXGI_FORMAT_R32_UINT, offset); break;
-	case sizeof(WORD):	getDevice()->GetContext()->IASetIndexBuffer(get(), DXGI_FORMAT_R16_UINT, offset); break;
-	}
-
+	return create<CD3D11IndexBuffer>(new CD3D11IndexBuffer(elementSize, usage, cpuAccessFlags, miscFlags));
 }
 void cgl::CD3D11IndexBuffer::Draw( UINT indexOffset, UINT vertexOffset)
 {
@@ -188,11 +166,19 @@ void cgl::CD3D11IndexBuffer::Draw()
 }
 void cgl::CD3D11IndexBuffer::Draw( UINT indexOffset, UINT indexCount, UINT vertexOffset )
 {
+	getDevice()->Bind(this);
 	getDevice()->GetContext()->DrawIndexed(indexCount, indexOffset, vertexOffset);
 }
-std::tr1::shared_ptr<cgl::CD3D11IndexBuffer> cgl::CD3D11IndexBuffer::Create( UINT elementSize, D3D11_USAGE usage /*= D3D11_USAGE_DEFAULT*/, UINT cpuAccessFlags /*= 0*/, UINT miscFlags /*= 0*/ )
+void cgl::CD3D11IndexBuffer::onParamUpdate()
 {
-	return create<CD3D11IndexBuffer>(new CD3D11IndexBuffer(elementSize, usage, cpuAccessFlags, miscFlags));
+	if (m_stride == 32)
+	{
+		SetParam<DXGI_FORMAT>(CGLIndexBufferBindable::BindParamFormat, DXGI_FORMAT_R32_UINT);
+	}
+	else if (m_stride == 16)
+	{
+		SetParam<DXGI_FORMAT>(CGLIndexBufferBindable::BindParamFormat, DXGI_FORMAT_R16_UINT);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -202,16 +188,9 @@ cgl::CD3D11ConstantBuffer::CD3D11ConstantBuffer( UINT elementSize, D3D11_USAGE u
 {
 
 }
-void cgl::CD3D11ConstantBuffer::Bind(CGL_SHADER_STAGE stage, UINT slot)
+void cgl::CD3D11ConstantBuffer::Bind(PD3D11EffectVariable pVar)
 {
-	switch(stage)
-	{
-	case CGL_SHADER_STAGE_VERTEX: 	getDevice()->GetContext()->VSSetConstantBuffers(slot, 1, ptr()); break;
-	case CGL_SHADER_STAGE_PIXEL: 	getDevice()->GetContext()->PSSetConstantBuffers(slot, 1, ptr()); break;
-	case CGL_SHADER_STAGE_GEOMETRY: getDevice()->GetContext()->GSSetConstantBuffers(slot, 1, ptr()); break;
-	case CGL_SHADER_STAGE_HULL: 	getDevice()->GetContext()->HSSetConstantBuffers(slot, 1, ptr()); break;
-	case CGL_SHADER_STAGE_DOMAIN: 	getDevice()->GetContext()->DSSetConstantBuffers(slot, 1, ptr()); break;
-	}
+	pVar->get()->AsConstantBuffer()->SetConstantBuffer(get());
 }
 std::tr1::shared_ptr<cgl::CD3D11ConstantBuffer> cgl::CD3D11ConstantBuffer::Create( UINT elementSize, D3D11_USAGE usage /*= D3D11_USAGE_DEFAULT*/, UINT cpuAccessFlags /*= 0*/, UINT miscFlags /*= 0*/ )
 {

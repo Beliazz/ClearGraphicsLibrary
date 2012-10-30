@@ -122,6 +122,7 @@ robocopy $(ProjectDir) $(CGL_HOME)\include "*.h" /PURGE /XD "$(OutDir)"
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CGLBindable.h" />
     <ClInclude Include="CGLBindCollection.h" />
     <ClInclude Include="CGLDataProvider.h" />
     <ClInclude Include="CGLGameLoop.h" />
@@ -148,6 +149,7 @@ robocopy $(ProjectDir) $(CGL_HOME)\include "*.h" /PURGE /XD "$(OutDir)"
     <ClInclude Include="D3D11InputBuffer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CGLBindable.cpp" />
     <ClCompile Include="CGLBindCollection.cpp" />
     <ClCompile Include="CGLGameLoop.cpp" />
     <ClCompile Include="CGLInputProcessor.cpp" />

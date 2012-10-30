@@ -176,6 +176,7 @@ protected:
 
 public:
 	virtual ~D3D11EffectVariable();
+	bool CheckType(D3D10_SHADER_VARIABLE_TYPE type);
 };
 
 //////////////////////////////////////////////////////////////////////////

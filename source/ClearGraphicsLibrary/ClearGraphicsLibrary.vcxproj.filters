@@ -97,6 +97,9 @@
     <ClInclude Include="CGLLabel.h">
       <Filter>Source\Drawing</Filter>
     </ClInclude>
+    <ClInclude Include="CGLBindable.h">
+      <Filter>Source\Base Classes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cgl.cpp">
@@ -164,6 +167,9 @@
     </ClCompile>
     <ClCompile Include="CGLLabel.cpp">
       <Filter>Source\Drawing</Filter>
+    </ClCompile>
+    <ClCompile Include="CGLBindable.cpp">
+      <Filter>Source\Base Classes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

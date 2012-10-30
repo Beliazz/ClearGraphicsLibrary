@@ -3,7 +3,7 @@
 //////////////////////////////////////////////////////////////////////////
 // d3d11 input buffer
 cgl::CD3D11InputBuffer::CD3D11InputBuffer(PD3D11InputLayout pLayout, ICGLInputBufferDataProvider* pDataProvider, D3D11_USAGE usage /*= D3D11_USAGE_DEFAULT*/, DWORD cpuAccessFlags /*= 0*/) 
-	: CGLBase("CD3D11InputBuffer"), m_pLayout(pLayout), m_pDataProvider(pDataProvider), m_desc(CD3D11_BUFFER_DESC(0, D3D11_BIND_VERTEX_BUFFER, usage, cpuAccessFlags))
+	: CGLBase("CD3D11InputBuffer"), CGLVertexBufferBindable(this), m_pLayout(pLayout), m_pDataProvider(pDataProvider), m_desc(CD3D11_BUFFER_DESC(0, D3D11_BIND_VERTEX_BUFFER, usage, cpuAccessFlags))
 {
 }
 HRESULT cgl::CD3D11InputBuffer::onRestore()
@@ -31,6 +31,9 @@ HRESULT cgl::CD3D11InputBuffer::onRestore()
 		}
 	}
 
+	// invalidate bind state 
+	invalidate();
+
 	return getDevice()->GetDevice()->CreateBuffer(&m_desc, NULL, ptr());
 }
 void cgl::CD3D11InputBuffer::onReset()
@@ -45,11 +48,7 @@ cgl::PD3D11InputBuffer cgl::CD3D11InputBuffer::Create(PD3D11InputLayout pLayout,
 {
 	return create<CD3D11InputBuffer>(new CD3D11InputBuffer(pLayout, pDataProvider, usage, cpuAccessFlags));
 }
-void cgl::CD3D11InputBuffer::Bind( UINT slot, UINT offset)
-{
-	UINT stride = m_pLayout->GetElementSize();
-	getDevice()->GetContext()->IASetVertexBuffers(slot, 1, ptr(), &stride, &offset );
-}
+
 void cgl::CD3D11InputBuffer::Bind( PD3D11InputBuffer* pBuffers, UINT count, UINT slot /*= 0*/, UINT offset /*= 0*/ )
 {
 	UINT* pOffsets = new UINT[count];
@@ -87,6 +86,9 @@ bool cgl::CD3D11InputBuffer::Update()
 		reset();
 		return restore();
 	}
+
+	// invalidate bind state
+	invalidate();
 
 	// get buffer size
 	D3D11_BUFFER_DESC desc;
@@ -129,3 +131,4 @@ bool cgl::CD3D11InputBuffer::Update()
 
 	return false;
 }
+

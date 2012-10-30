@@ -2,6 +2,9 @@
 #define cgl_h__
 
 #pragma warning (disable : 4251)
+#pragma warning (disable : 4482)
+#pragma warning (disable : 4355)
+
 #define _CRT_SECURE_NO_WARNINGS
 
 #ifdef CLEARGRAPHICSLIBRARY_EXPORTS
@@ -47,6 +50,8 @@
 #include "CGLObject.h"
 #include "CGLInstancing.h"
 #include "CGLDataProvider.h"
+#include "CGLBindable.h"
+
 #include "CGLInputProcessor.h"
 #include "CGLLogger.h"
 #include "CGLWindow.h"

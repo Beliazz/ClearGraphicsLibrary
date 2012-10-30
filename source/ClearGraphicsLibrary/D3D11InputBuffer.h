@@ -13,7 +13,7 @@ typedef CGL_API std::tr1::shared_ptr<CD3D11InputBuffer>	PD3D11InputBuffer;
 
 //////////////////////////////////////////////////////////////////////////
 // d3d11 input buffer
-class CGL_API CD3D11InputBuffer : public CGLBase<ID3D11Buffer>
+class CGL_API CD3D11InputBuffer : public CGLBase<ID3D11Buffer>, public CGLVertexBufferBindable
 {	
 private:
 	D3D11_BUFFER_DESC m_desc;
@@ -31,7 +31,6 @@ public:
 	static void Bind(PD3D11InputBuffer* pBuffers, UINT count, UINT slot = 0, UINT offset = 0);
 
 	bool Update();
-	void Bind(UINT slot = 0, UINT offset = 0);
 	void Draw();
 	void Draw(UINT offset);
 	void Draw(UINT offset, UINT count);

@@ -314,8 +314,14 @@ bool cgl::CGLManager::RestoreDbg( CGLObject* pObject, std::string file, std::str
 		if (FAILED(result))
 		{
 			pObject->setProcessing(false);
-
 			return false;
+		}
+
+		// if this object can be bound to the render pipeline
+		// invalidate its state so it is bound again next time
+		if (pObject->getFeatureFlags() & CGL_OBJECT_BIND_FEATURE)
+		{
+			reinterpret_cast<CGLBindable*>(pObject)->invalidate();
 		}
 
 		// restoring finished
@@ -364,8 +370,14 @@ bool cgl::CGLManager::Restore( CGLObject* pObject )
 		if (FAILED(result))
 		{
 			pObject->setProcessing(false);
-
 			return false;
+		}
+
+		// if this object can be bound to the render pipeline
+		// invalidate its state so it is bound again next time
+		if (pObject->getFeatureFlags() & CGL_OBJECT_BIND_FEATURE)
+		{
+			reinterpret_cast<CGLBindable*>(pObject)->invalidate();
 		}
 
 		// restoring finished
