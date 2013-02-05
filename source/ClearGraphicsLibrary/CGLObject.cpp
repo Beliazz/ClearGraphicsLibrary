@@ -3,12 +3,13 @@
 //////////////////////////////////////////////////////////////////////////
 // cgl manager connector
 
-cgl::core::D3DContext cgl::core::CGLAccess::D3DContext()
+cgl::core::CUnknown<ID3D11DeviceContext> cgl::core::CGLAccess::D3DContext()
 {
 	ID3D11DeviceContext* pContext = NULL;
 	reinterpret_cast<CD3D11Device*>(CGLManagerBase::GetInstance()->GetDevice().get())->get()->GetImmediateContext(&pContext);
-	return cgl::core::D3DContext(pContext);
+	return pContext;
 }
+
 ID3D11Device* cgl::core::CGLAccess::D3DDevice()
 {
 	return reinterpret_cast<CD3D11Device*>(CGLManagerBase::GetInstance()->GetDevice().get())->get();
@@ -56,7 +57,6 @@ void cgl::core::CGLObject::comReset(IUnknown** ppComPtr )
 				std::stringstream ss;
 				ss << "interface still alive [ref count = " << refCount << "]";
 				cgl::debug::CGLLogEntry(__FILE__, __LINE__, cgl::debug::CGL_LOG_CATEGORY_WARNING, ss.str().c_str(), this);
-				//_RPT1(0,"still alive", &refCount);
 			}
 
 			(*ppComPtr) = NULL;

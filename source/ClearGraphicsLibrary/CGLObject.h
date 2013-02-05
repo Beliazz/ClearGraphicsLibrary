@@ -18,18 +18,23 @@ namespace cgl
 			CGL_SHADER_STAGE_DOMAIN
 		};
 
-		struct D3DContext
+		template <class T>
+		struct CUnknown
 		{
 		private:
-			std::tr1::shared_ptr<ID3D11DeviceContext> m_pContext;
+			T* m_pIUnknown;
 
 		public:
-			D3DContext(ID3D11DeviceContext* pContext) : m_pContext(pContext) { }
-			~D3DContext() { m_pContext->Release(); }
+			CUnknown(T* pContext) : m_pIUnknown(pContext) { }
+			CUnknown(CUnknown& rhs) : m_pIUnknown(rhs.m_pIUnknown)
+			{
+				m_pIUnknown->AddRef();
+			}
+			~CUnknown() { m_pIUnknown->Release(); }
 
-			inline ID3D11DeviceContext* operator ->() { return m_pContext.get(); }
-			inline ID3D11DeviceContext* operator  *() { return m_pContext.get(); }
-			inline operator ID3D11DeviceContext*() 	  { return m_pContext.get(); }
+			inline T* operator ->() { return m_pIUnknown; }
+			inline T* operator  *() { return m_pIUnknown; }
+			inline operator T*() 	{ return m_pIUnknown; }
 		};
 
 		//////////////////////////////////////////////////////////////////////////
@@ -38,10 +43,10 @@ namespace cgl
 		class CGL_API CGLAccess
 		{
 		public:
-			static CGLManagerBase*	CGLMgr();
-			static CD3D11Device*	CGLDevice();
-			static D3DContext		D3DContext();
-			static ID3D11Device*	D3DDevice();
+			static CGLManagerBase*					CGLMgr();
+			static CD3D11Device*					CGLDevice();
+			static CUnknown<ID3D11DeviceContext>	D3DContext();
+			static ID3D11Device* 					D3DDevice();
 		};
 
 		//////////////////////////////////////////////////////////////////////////

@@ -39,7 +39,9 @@ void cgl::core::CDXGISwapChain::onReset()
 	// switch to windowed mode before releasing
 	// see msdn for further information
 	get()->SetFullscreenState(FALSE, NULL);
-	comReset((IUnknown**)ptr());
+	UINT ref = get()->AddRef();
+	get()->Release();
+	//comReset((IUnknown**)ptr());
 }
 
 void cgl::core::CDXGISwapChain::getDependencies( std::vector<cgl::core::PCGLObject>* pDependencies )

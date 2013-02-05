@@ -19,19 +19,39 @@ cgl::debug::CGLManagerDbg::~CGLManagerDbg()
 	// notify application
 	// 
 	// check device
+	Tidy();
+	
 	if (GetDevice().use_count() > 1)
 		Notify(CGL_NOTIFICATION_STILL_ALIVE, GetDevice().get());	
 
-	Unregister(GetDevice());
-	SetDevice(nullptr);
-
-	Tidy();
-
-	cgl::core::PCGLObjectList::reverse_iterator it;
-	for (it = GetObjects().rbegin(); it != GetObjects().rend(); it++)
+	ID3D11Debug* pDebug = NULL;
+	reinterpret_cast<cgl::core::CD3D11Device*>(GetDevice().get())->get()->QueryInterface(__uuidof(ID3D11Debug), (void**)&pDebug);
+	if(pDebug)
 	{
-		Notify(CGL_NOTIFICATION_STILL_ALIVE, (*it).get());
-		Unregister(*it);
+		Unregister(GetDevice());
+		SetDevice(nullptr);
+
+		Tidy();
+		for (auto it = GetObjects().rbegin(); it != GetObjects().rend(); it++)
+		{
+			Notify(CGL_NOTIFICATION_STILL_ALIVE, (*it).get());
+			Unregister(*it);
+		}
+
+		pDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+		pDebug->Release();
+	}
+	else
+	{
+		Unregister(GetDevice());
+		SetDevice(nullptr);
+
+		Tidy();
+		for (auto it = GetObjects().rbegin(); it != GetObjects().rend(); it++)
+		{
+			Notify(CGL_NOTIFICATION_STILL_ALIVE, (*it).get());
+			Unregister(*it);
+		}
 	}
 }
 
