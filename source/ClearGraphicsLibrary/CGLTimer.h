@@ -2,92 +2,92 @@
 
 #include "cgl.h"
 
-namespace cgl {
-
-class CGLTimer;
-typedef std::shared_ptr<CGLTimer> PCGLTimer;
-
-class CGL_API CGLTimer
+namespace cgl
 {
-private:
-	float m_elapsed;
-	std::string m_name;
+	namespace time
+	{
+		class CGLTimer;
+		typedef std::shared_ptr<CGLTimer> PCGLTimer;
+		typedef std::map<std::string, CGLTimer*> CGLTimerMap;
 
-protected:
-	CGLTimer(std::string name) : m_elapsed(0.0f), m_name(name) {};
+		class CGL_API CGLTimer
+		{
+		private:
+			float m_elapsed;
+			std::string m_name;
 
-	void _set(float elapsed) { m_elapsed = elapsed; }
-	static CGLTimer* _register(CGLTimer* timer);
+		protected:
+			CGLTimer(std::string name);;
 
-public:
-	virtual ~CGLTimer();
+			void _set(float elapsed) { m_elapsed = elapsed; }
+			static CGLTimer* _register(CGLTimer* timer);
 
-	virtual void Start() PURE;
-	virtual void Stop() PURE;
+		public:
+			virtual ~CGLTimer();
 
-	inline float get()			 { return m_elapsed; }
-	inline std::string getName() { return m_name; }	
-};
-class CGL_API CGLTimerDatabase
-{
-private:
-	std::map<std::string, CGLTimer*> m_timer;
-	CGLTimerDatabase() { }
+			virtual void Start() PURE;
+			virtual void Stop() PURE;
 
-public:
-	static CGLTimerDatabase* Get();
+			inline float get()			 { return m_elapsed; }
+			inline std::string getName() { return m_name; }	
+		};
+		class CGL_API CGLTimerDatabase
+		{
+		private:
+			static CGLTimerMap m_timer;
 
-	void AddTimer(CGLTimer* pTimer);
-	void DeleteTimer( std::string name );
-	CGLTimer* GetTimer(std::string name);
+		public:
+			static void AddTimer(CGLTimer* pTimer);
+			static void DeleteTimer( std::string name );
+			static CGLTimer* GetTimer(std::string name);
 
-	inline std::map<std::string, CGLTimer*>& GetTimers() { return m_timer; }
-};
-class CGL_API CGLTimerReport
-{
-private:
-	std::map<std::string, CGLTimer*> m_timer;
+			static CGLTimerMap& GetTimers() { return m_timer; }
+		};
+		class CGL_API CGLTimerReport
+		{
+		private:
+			std::map<std::string, CGLTimer*> m_timer;
 
-public:
-	CGLTimerReport() : m_timer(CGLTimerDatabase::Get()->GetTimers()) { }
-	inline std::map<std::string, CGLTimer*>* operator ->()	{ return &m_timer; }
-	inline std::map<std::string, CGLTimer*>* operator *()	{ return &m_timer; }
-};
+		public:
+			CGLTimerReport() : m_timer(CGLTimerDatabase::GetTimers()) { }
+			inline std::map<std::string, CGLTimer*>* operator ->()	{ return &m_timer; }
+			inline std::map<std::string, CGLTimer*>* operator *()	{ return &m_timer; }
+		};
 
-class CGL_API CGLCpuTimer : public CGLTimer
-{
-private:
-	UINT64 m_start;
-	UINT64 m_end;
-	UINT64 m_frequency;
+		class CGL_API CGLCpuTimer : public CGLTimer
+		{
+		private:
+			UINT64 m_start;
+			UINT64 m_end;
+			UINT64 m_frequency;
 
-protected:
-	CGLCpuTimer(std::string name);
+		protected:
+			CGLCpuTimer(std::string name);
 
-public:
-	static PCGLTimer Create(std::string name);
+		public:
+			static PCGLTimer Create(std::string name);
 
-	void Start();
-	void Stop();
-};
-class CGL_API CGLGpuTimer : public CGLTimer, public CGLManagerConnector
-{
-	PD3D11Query m_pTimeQuery;
-	PD3D11Query m_pDisjointQuery;
+			void Start();
+			void Stop();
+		};
+		class CGL_API CGLGpuTimer : public CGLTimer, public cgl::core::CGLAccess
+		{
+			cgl::core::PD3D11Query m_pTimeQuery;
+			cgl::core::PD3D11Query m_pDisjointQuery;
 
-	UINT64 m_start;
-	UINT64 m_end;
+			UINT64 m_start;
+			UINT64 m_end;
 
-protected:
-	CGLGpuTimer(std::string name);
+		protected:
+			CGLGpuTimer(std::string name);
 
 
-public:
-	static PCGLTimer Create(std::string name);
-	~CGLGpuTimer() { }
+		public:
+			static PCGLTimer Create(std::string name);
+			~CGLGpuTimer() { }
 
-	void Start();
-	void Stop();
-};
-
+			void Start();
+			void Stop();
+		};
+	}
 }

@@ -1,9 +1,9 @@
 #include "CGLLabel.h"
 
-cgl::drawing::CGLLabel::CGLLabel( PD3D11Effect pEffect, int width, int height ) 
+cgl::drawing::CGLLabel::CGLLabel( cgl::core::PD3D11Effect pEffect, cgl::core::PD3D11BackBuffer pBackBuffer, int width, int height ) 
 	: CGLObject("CGLLabel"), m_pEffect(pEffect)
 {
-	m_pSprite = CGLSprite::Create();
+	m_pSprite = CGLSprite::Create(pBackBuffer);
 
 	m_pSprite->SetWidth((float)width);
 	m_pSprite->SetHeight((float)height);
@@ -26,12 +26,12 @@ HRESULT cgl::drawing::CGLLabel::onRestore()
 	desc.Width = (UINT)m_pSprite->GetWidth();
 	desc.Height = (UINT)m_pSprite->GetHeight();
 	desc.Usage = D3D11_USAGE_DEFAULT;
-	cgl::PD3D11Resource pRes = cgl::CD3D11Texture2DBlank::Create(desc);
+	cgl::core::PD3D11Resource pRes = cgl::core::CD3D11Texture2DBlank::Create(desc);
 
 	if (!m_pSprite->SetTexture(pRes))
 		return E_FAIL;
 
-	m_pRenderTargetCollection = cgl::CGLRenderTargetViewCollection::Create();
+	m_pRenderTargetCollection = cgl::core::CGLRenderTargetViewCollection::Create();
 	m_pRenderTargetCollection->Add(m_pSprite->GetRenderTarget(), 0);
 	if (!CGL_RESTORE(m_pRenderTargetCollection))
 		return false;
@@ -54,7 +54,7 @@ void cgl::drawing::CGLLabel::Render()
 	if (m_bChanged)
 	{	
 		ID3D11ShaderResourceView* tmp[D3D10_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT] = {0};
-		mgr()->GetDevice()->GetContext()->PSSetShaderResources(0, D3D10_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT, tmp);
+		cgl::core::CGLAccess::D3DContext()->PSSetShaderResources(0, D3D10_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT, tmp);
 
 		m_pRenderTargetCollection->Save();
 		m_pRenderTargetCollection->Bind();
@@ -85,7 +85,6 @@ float cgl::drawing::CGLLabel::GetX()
 {
 	return m_pSprite->GetX();
 }
-
 float cgl::drawing::CGLLabel::GetY()
 {
 	return m_pSprite->GetY();
@@ -95,7 +94,6 @@ float cgl::drawing::CGLLabel::GetWidth()
 {
 	return m_pSprite->GetWidth();
 }
-
 float cgl::drawing::CGLLabel::GetHeight()
 {
 	return m_pSprite->GetHeight();

@@ -8,168 +8,198 @@
     <Filter Include="Source">
       <UniqueIdentifier>{92cf0bb1-9d0e-48f2-af9d-53d1f26a085d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Helper Classes">
-      <UniqueIdentifier>{884b4350-f696-409e-a234-445e93c67077}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Base Classes">
-      <UniqueIdentifier>{82218b2d-3308-4def-9cc0-161134a3ce58}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Diagrams">
       <UniqueIdentifier>{2f4c887c-c75c-487c-8064-483e5c3f3667}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Interface Wrapper">
+    <Filter Include="Source\debug">
+      <UniqueIdentifier>{0c27456a-6570-46c7-b5b8-754413ff1113}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\core">
+      <UniqueIdentifier>{624542e4-4c4d-41ee-9a5d-61c2e752882b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\core\Interface Wrapper">
       <UniqueIdentifier>{966cb7d6-5421-4b66-aef4-07c4a7ffe190}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Drawing">
+    <Filter Include="Source\core\Base Classes">
+      <UniqueIdentifier>{82218b2d-3308-4def-9cc0-161134a3ce58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\drawing">
       <UniqueIdentifier>{52d527f6-08bc-43ec-90df-e5702de7dd42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\time">
+      <UniqueIdentifier>{f343f5b1-a3f0-4f71-b498-3a623482b8c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\utility">
+      <UniqueIdentifier>{884b4350-f696-409e-a234-445e93c67077}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cgl.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="CGLManager.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="CGLWindow.h">
-      <Filter>Source\Helper Classes</Filter>
-    </ClInclude>
-    <ClInclude Include="CGLLogger.h">
-      <Filter>Source\Helper Classes</Filter>
+      <Filter>Source\utility</Filter>
     </ClInclude>
     <ClInclude Include="CGLObject.h">
-      <Filter>Source\Base Classes</Filter>
-    </ClInclude>
-    <ClInclude Include="CGLBindCollection.h">
-      <Filter>Source\Helper Classes</Filter>
-    </ClInclude>
-    <ClInclude Include="CGLInstancing.h">
-      <Filter>Source\Base Classes</Filter>
-    </ClInclude>
-    <ClInclude Include="CGLDataProvider.h">
-      <Filter>Source\Base Classes</Filter>
+      <Filter>Source\core\Base Classes</Filter>
     </ClInclude>
     <ClInclude Include="CGLInputProcessor.h">
-      <Filter>Source\Helper Classes</Filter>
+      <Filter>Source\utility</Filter>
     </ClInclude>
     <ClInclude Include="DXGIFactory.h">
-      <Filter>Source\Interface Wrapper</Filter>
+      <Filter>Source\core\Interface Wrapper</Filter>
     </ClInclude>
     <ClInclude Include="D3D11Buffer.h">
-      <Filter>Source\Interface Wrapper</Filter>
+      <Filter>Source\core\Interface Wrapper</Filter>
     </ClInclude>
     <ClInclude Include="D3D11Device.h">
-      <Filter>Source\Interface Wrapper</Filter>
+      <Filter>Source\core\Interface Wrapper</Filter>
     </ClInclude>
     <ClInclude Include="D3D11Effect.h">
-      <Filter>Source\Interface Wrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D11InputBuffer.h">
-      <Filter>Source\Interface Wrapper</Filter>
+      <Filter>Source\core\Interface Wrapper</Filter>
     </ClInclude>
     <ClInclude Include="D3D11InputLayout.h">
-      <Filter>Source\Interface Wrapper</Filter>
+      <Filter>Source\core\Interface Wrapper</Filter>
     </ClInclude>
     <ClInclude Include="D3D11Query.h">
-      <Filter>Source\Interface Wrapper</Filter>
+      <Filter>Source\core\Interface Wrapper</Filter>
     </ClInclude>
     <ClInclude Include="D3D11RenderStates.h">
-      <Filter>Source\Interface Wrapper</Filter>
+      <Filter>Source\core\Interface Wrapper</Filter>
     </ClInclude>
     <ClInclude Include="D3D11ResourceView.h">
-      <Filter>Source\Interface Wrapper</Filter>
+      <Filter>Source\core\Interface Wrapper</Filter>
     </ClInclude>
     <ClInclude Include="D3D11Texture.h">
-      <Filter>Source\Interface Wrapper</Filter>
-    </ClInclude>
-    <ClInclude Include="CGLGameLoop.h">
-      <Filter>Source\Helper Classes</Filter>
-    </ClInclude>
-    <ClInclude Include=".\CGLTimer.h">
-      <Filter>Source\Helper Classes</Filter>
+      <Filter>Source\core\Interface Wrapper</Filter>
     </ClInclude>
     <ClInclude Include="CGLSpriteBatch.h">
-      <Filter>Source\Drawing</Filter>
+      <Filter>Source\drawing</Filter>
     </ClInclude>
     <ClInclude Include="CGLSprite.h">
-      <Filter>Source\Drawing</Filter>
+      <Filter>Source\drawing</Filter>
     </ClInclude>
     <ClInclude Include="CGLLabel.h">
-      <Filter>Source\Drawing</Filter>
+      <Filter>Source\drawing</Filter>
     </ClInclude>
     <ClInclude Include="CGLBindable.h">
-      <Filter>Source\Base Classes</Filter>
+      <Filter>Source\core\Base Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="CGLManager.h">
+      <Filter>Source\core</Filter>
+    </ClInclude>
+    <ClInclude Include="CGLGameLoop.h">
+      <Filter>Source\time</Filter>
+    </ClInclude>
+    <ClInclude Include=".\CGLTimer.h">
+      <Filter>Source\time</Filter>
+    </ClInclude>
+    <ClInclude Include="CGLSmoother.h">
+      <Filter>Source\time</Filter>
+    </ClInclude>
+    <ClInclude Include="CGLBindCollection.h">
+      <Filter>Source\core\Base Classes</Filter>
+    </ClInclude>
+    <ClInclude Include=".\CGLInputBuffer.h">
+      <Filter>Source\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="CGLManagerDbg.h">
+      <Filter>Source\debug</Filter>
+    </ClInclude>
+    <ClInclude Include=".\CGLManagerBase.h">
+      <Filter>Source\core\Base Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="CGLLog.h">
+      <Filter>Source\debug</Filter>
+    </ClInclude>
+    <ClInclude Include="CGLMesh.h">
+      <Filter>Source\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="DXGISwapChain.h">
+      <Filter>Source\core\Interface Wrapper</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cgl.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="CGLManager.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="CGLWindow.cpp">
-      <Filter>Source\Helper Classes</Filter>
-    </ClCompile>
-    <ClCompile Include="CGLLogger.cpp">
-      <Filter>Source\Helper Classes</Filter>
+      <Filter>Source\utility</Filter>
     </ClCompile>
     <ClCompile Include="CGLObject.cpp">
-      <Filter>Source\Base Classes</Filter>
-    </ClCompile>
-    <ClCompile Include="CGLBindCollection.cpp">
-      <Filter>Source\Helper Classes</Filter>
+      <Filter>Source\core\Base Classes</Filter>
     </ClCompile>
     <ClCompile Include="CGLInputProcessor.cpp">
-      <Filter>Source\Helper Classes</Filter>
+      <Filter>Source\utility</Filter>
     </ClCompile>
     <ClCompile Include="D3D11Buffer.cpp">
-      <Filter>Source\Interface Wrapper</Filter>
+      <Filter>Source\core\Interface Wrapper</Filter>
     </ClCompile>
     <ClCompile Include="D3D11Device.cpp">
-      <Filter>Source\Interface Wrapper</Filter>
+      <Filter>Source\core\Interface Wrapper</Filter>
     </ClCompile>
     <ClCompile Include="D3D11Effect.cpp">
-      <Filter>Source\Interface Wrapper</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D11InputBuffer.cpp">
-      <Filter>Source\Interface Wrapper</Filter>
+      <Filter>Source\core\Interface Wrapper</Filter>
     </ClCompile>
     <ClCompile Include="D3D11InputLayout.cpp">
-      <Filter>Source\Interface Wrapper</Filter>
+      <Filter>Source\core\Interface Wrapper</Filter>
     </ClCompile>
     <ClCompile Include="D3D11Query.cpp">
-      <Filter>Source\Interface Wrapper</Filter>
+      <Filter>Source\core\Interface Wrapper</Filter>
     </ClCompile>
     <ClCompile Include="D3D11RenderStates.cpp">
-      <Filter>Source\Interface Wrapper</Filter>
+      <Filter>Source\core\Interface Wrapper</Filter>
     </ClCompile>
     <ClCompile Include="D3D11ResourceView.cpp">
-      <Filter>Source\Interface Wrapper</Filter>
+      <Filter>Source\core\Interface Wrapper</Filter>
     </ClCompile>
     <ClCompile Include="D3D11Texture.cpp">
-      <Filter>Source\Interface Wrapper</Filter>
+      <Filter>Source\core\Interface Wrapper</Filter>
     </ClCompile>
     <ClCompile Include="DXGIFactory.cpp">
-      <Filter>Source\Interface Wrapper</Filter>
-    </ClCompile>
-    <ClCompile Include="CGLGameLoop.cpp">
-      <Filter>Source\Helper Classes</Filter>
-    </ClCompile>
-    <ClCompile Include=".\CGLTimer.cpp">
-      <Filter>Source\Helper Classes</Filter>
+      <Filter>Source\core\Interface Wrapper</Filter>
     </ClCompile>
     <ClCompile Include="CGLSprite.cpp">
-      <Filter>Source\Drawing</Filter>
+      <Filter>Source\drawing</Filter>
     </ClCompile>
     <ClCompile Include="CGLSpriteBatch.cpp">
-      <Filter>Source\Drawing</Filter>
+      <Filter>Source\drawing</Filter>
     </ClCompile>
     <ClCompile Include="CGLLabel.cpp">
-      <Filter>Source\Drawing</Filter>
+      <Filter>Source\drawing</Filter>
     </ClCompile>
     <ClCompile Include="CGLBindable.cpp">
-      <Filter>Source\Base Classes</Filter>
+      <Filter>Source\core\Base Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="CGLManager.cpp">
+      <Filter>Source\core</Filter>
+    </ClCompile>
+    <ClCompile Include="CGLGameLoop.cpp">
+      <Filter>Source\time</Filter>
+    </ClCompile>
+    <ClCompile Include=".\CGLTimer.cpp">
+      <Filter>Source\time</Filter>
+    </ClCompile>
+    <ClCompile Include="CGLBindCollection.cpp">
+      <Filter>Source\core\Base Classes</Filter>
+    </ClCompile>
+    <ClCompile Include=".\CGLInputBuffer.cpp">
+      <Filter>Source\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="CGLManagerDbg.cpp">
+      <Filter>Source\debug</Filter>
+    </ClCompile>
+    <ClCompile Include="CGLManagerBase.cpp">
+      <Filter>Source\core\Base Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="CGLLog.cpp">
+      <Filter>Source\debug</Filter>
+    </ClCompile>
+    <ClCompile Include="CGLMesh.cpp">
+      <Filter>Source\utility</Filter>
+    </ClCompile>
+    <ClCompile Include="DXGISwapChain.cpp">
+      <Filter>Source\core\Interface Wrapper</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

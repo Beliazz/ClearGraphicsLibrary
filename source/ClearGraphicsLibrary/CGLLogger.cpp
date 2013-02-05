@@ -2,7 +2,7 @@
 
 //////////////////////////////////////////////////////////////////////////
 // CGLLogger
-bool cgl::CGLLogger::Print( LPCSTR log, ... )
+bool cgl::debug::CGLLogger::Print( LPCSTR log, ... )
 {
 	#ifdef _DEBUG // only output messages when debugging
 
@@ -58,52 +58,52 @@ bool cgl::CGLLogger::Print( LPCSTR log, ... )
 
 	return true;
 }
-void cgl::CGLLogger::LogObjectState( UINT logType, cgl::CGLObject* pObject, HRESULT result, void* pData )
+void cgl::debug::CGLLogger::LogObjectState( UINT logType, cgl::core::CGLObject* pObject, HRESULT result, void* pData )
 {
 	switch (logType)
 	{
-	case CGL_NOTIFICATION_INVALID_PTR:			{ Print("ERROR: invalid ptr"); } break;
-	case CGL_NOTIFICATION_INSTANTIATION:		{ Print("INFO:  instantiated name=\"%s\" type=\"%s\"",					pObject->getName().c_str(), pObject->getTypeName().c_str()); } break;
-	case CGL_NOTIFICATION_CYCLIC_DEPENDENCY:
+	case cgl::debug::CGL_NOTIFICATION_INVALID_PTR:			{ Print("ERROR: invalid ptr"); } break;
+	case cgl::debug::CGL_NOTIFICATION_INSTANTIATION:			{ Print("INFO:  instantiated name=\"%s\" type=\"%s\"",					"", pObject->getTypeName().c_str()); } break;
+	case cgl::debug::CGL_NOTIFICATION_CYCLIC_DEPENDENCY:
 		{ 
 			Print("ERROR: cyclic dependency detected"
 				  "\n""%s",	
 				  pObject->toString().c_str());
 		} break;
 
-	case CGL_NOTIFICATION_RESET:
+	case cgl::debug::CGL_NOTIFICATION_RESET:
 		{
 			Print("INFO:  reset"
 				  "\n""%s",
 				  pObject->toString().c_str());
 		} break;
 
-	case CGL_NOTIFICATION_DESCTRUCTION:		
+	case cgl::debug::CGL_NOTIFICATION_DESCTRUCTION:		
 		{ 
 			Print("INFO:  destroyed"
 				"\n""%s",
 				pObject->toString().c_str());
 		}break;
 
-	case CGL_NOTIFICATION_STILL_ALIVE:		
+	case cgl::debug::CGL_NOTIFICATION_STILL_ALIVE:		
 		{ 
 			Print("WARNING: still alive"
 				"\n""%s",
 				pObject->toString().c_str());
 		} break;
-	case CGL_NOTIFICATION_COM_INTERFACE_STILL_ALIVE:
+	case cgl::debug::CGL_NOTIFICATION_COM_INTERFACE_STILL_ALIVE:
 		{ 
 			Print("ERROR: OnReset() -> COM interface not fully released (%i refs)"
 				  "\n""%s",
 				  *((int*)pData), 
 				  pObject->toString().c_str());
 		} break;
-	case CGL_NOTIFICATION_NO_DEVICE:
+	case cgl::debug::CGL_NOTIFICATION_NO_DEVICE:
 		{
 			if (pObject)
 			{
 				Print("ERROR: registration failed name=\"%s\" type=\"%s\"\n                            Error: no device registered!\n",
-					pObject->getName().c_str(),	
+					"",	
 					pObject->getTypeName().c_str());
 			}
 			else
@@ -112,26 +112,26 @@ void cgl::CGLLogger::LogObjectState( UINT logType, cgl::CGLObject* pObject, HRES
 			}
 		} break;
 
-	case CGL_NOTIFICATION_CREATION:
+	case cgl::debug::CGL_NOTIFICATION_CREATION:
 		{
 			if (SUCCEEDED(result))
 			{
 				Print("INFO:  created name=\"%s\" type=\"%s\"",
-					  pObject->getName().c_str(),
+					  "",
 					  pObject->getTypeName().c_str());
 			}
 			else
 			{			
 				Print("ERROR: creation failed name=\"%s\" type=\"%s\"\n                            Error: %s"
 																	"\n                            Description: %s\n",
-					 pObject->getName().c_str(),
+					 "",
 					 pObject->getTypeName().c_str(),
 					 DXGetErrorStringA(result),
 					 DXGetErrorDescriptionA(result));
 			}
 		} break;
 
-	case CGL_NOTIFICATION_RESTORATION:
+	case cgl::debug::CGL_NOTIFICATION_RESTORATION:
 		{
 			if (SUCCEEDED(result))
 			{
@@ -151,18 +151,18 @@ void cgl::CGLLogger::LogObjectState( UINT logType, cgl::CGLObject* pObject, HRES
 			}
 		} break;
 
-	case CGL_NOTIFICATION_REGISTRATION:
+	case cgl::debug::CGL_NOTIFICATION_REGISTRATION:
 		{
 			if (SUCCEEDED(result))
 			{
 				Print("INFO:  registered name=\"%s\" type=\"%s\"",
-					  pObject->getName().c_str(),
+					  "",
 					  pObject->getTypeName().c_str());
 			}
 			else
 			{
 				Print("ERROR: not registered name=\"%s\" type=\"%s\"",
-					  pObject->getName().c_str(),
+					  "",
 					  pObject->getTypeName().c_str());
 			}
 		} break;

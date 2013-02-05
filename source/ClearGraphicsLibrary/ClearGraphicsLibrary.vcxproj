@@ -26,7 +26,7 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v100</PlatformToolset>
+    <PlatformToolset>Windows7.1SDK</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='PCH Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -87,8 +87,9 @@
     <PostBuildEvent>
       <Command>robocopy $(OutDir) $(CGL_HOME)\bin\$(Configuration)\ "*.dll" /PURGE
 robocopy $(OutDir) $(CGL_HOME)\lib\$(Configuration)\ "*.lib" /PURGE
+
 robocopy $(ProjectDir) $(CGL_HOME)\include "*.h" /PURGE /XD "$(OutDir)"
-</Command>
+if errorlevel 1 GOTO :eof</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='PCH Debug|Win32'">
@@ -124,13 +125,14 @@ robocopy $(ProjectDir) $(CGL_HOME)\include "*.h" /PURGE /XD "$(OutDir)"
   <ItemGroup>
     <ClInclude Include="CGLBindable.h" />
     <ClInclude Include="CGLBindCollection.h" />
-    <ClInclude Include="CGLDataProvider.h" />
     <ClInclude Include="CGLGameLoop.h" />
     <ClInclude Include="CGLInputProcessor.h" />
     <ClInclude Include="CGLLabel.h" />
-    <ClInclude Include="CGLLogger.h" />
-    <ClInclude Include="CGLInstancing.h" />
     <ClInclude Include=".\CGLTimer.h" />
+    <ClInclude Include="CGLManagerDbg.h" />
+    <ClInclude Include="CGLLog.h" />
+    <ClInclude Include="CGLMesh.h" />
+    <ClInclude Include="CGLSmoother.h" />
     <ClInclude Include="CGLSprite.h" />
     <ClInclude Include="CGLSpriteBatch.h" />
     <ClInclude Include="D3D11Buffer.h" />
@@ -146,7 +148,9 @@ robocopy $(ProjectDir) $(CGL_HOME)\include "*.h" /PURGE /XD "$(OutDir)"
     <ClInclude Include="D3D11Texture.h" />
     <ClInclude Include="CGLWindow.h" />
     <ClInclude Include="cgl.h" />
-    <ClInclude Include="D3D11InputBuffer.h" />
+    <ClInclude Include=".\CGLInputBuffer.h" />
+    <ClInclude Include=".\CGLManagerBase.h" />
+    <ClInclude Include="DXGISwapChain.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CGLBindable.cpp" />
@@ -155,12 +159,15 @@ robocopy $(ProjectDir) $(CGL_HOME)\include "*.h" /PURGE /XD "$(OutDir)"
     <ClCompile Include="CGLInputProcessor.cpp" />
     <ClCompile Include=".\CGLTimer.cpp" />
     <ClCompile Include="CGLLabel.cpp" />
+    <ClCompile Include="CGLManagerBase.cpp" />
+    <ClCompile Include="CGLManagerDbg.cpp" />
+    <ClCompile Include="CGLLog.cpp" />
+    <ClCompile Include="CGLMesh.cpp" />
     <ClCompile Include="CGLSprite.cpp" />
     <ClCompile Include="CGLSpriteBatch.cpp" />
     <ClCompile Include="D3D11InputLayout.cpp" />
     <ClCompile Include="D3D11Query.cpp" />
     <ClCompile Include="CGLObject.cpp" />
-    <ClCompile Include="CGLLogger.cpp" />
     <ClCompile Include="CGLManager.cpp" />
     <ClCompile Include="D3D11Buffer.cpp" />
     <ClCompile Include="D3D11Device.cpp" />
@@ -171,7 +178,8 @@ robocopy $(ProjectDir) $(CGL_HOME)\include "*.h" /PURGE /XD "$(OutDir)"
     <ClCompile Include="CGLWindow.cpp" />
     <ClCompile Include="cgl.cpp" />
     <ClCompile Include="D3D11Texture.cpp" />
-    <ClCompile Include="D3D11InputBuffer.cpp" />
+    <ClCompile Include=".\CGLInputBuffer.cpp" />
+    <ClCompile Include="DXGISwapChain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cgl.cd" />

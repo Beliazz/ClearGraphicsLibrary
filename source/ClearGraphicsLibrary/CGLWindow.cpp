@@ -2,7 +2,7 @@
 
 //////////////////////////////////////////////////////////////////////////
 // cgl window base class
-void cgl::CGLWindow::PeekMessages()
+void cgl::util::CGLWindow::PeekMessages()
 {
 	MSG msg = MSG();
 	while(PeekMessage(&msg, get(), 0, 0, PM_REMOVE))
@@ -11,7 +11,7 @@ void cgl::CGLWindow::PeekMessages()
 		DispatchMessage(&msg);
 	}
 }
-void cgl::CGLWindow::GetMessages()
+void cgl::util::CGLWindow::GetMessages()
 {
 	MSG msg = MSG();
 	while(GetMessage(&msg, get(), 0, 0))
@@ -22,7 +22,7 @@ void cgl::CGLWindow::GetMessages()
 }
 //
 // static functions
-void cgl::CGLWindow::PeekMessages(HWND handle)
+void cgl::util::CGLWindow::PeekMessages(HWND handle)
 {
 	MSG msg = MSG();
 	while(PeekMessage(&msg, handle, 0, 0, PM_REMOVE))
@@ -31,7 +31,7 @@ void cgl::CGLWindow::PeekMessages(HWND handle)
 		DispatchMessage(&msg);
 	}
 }
-void cgl::CGLWindow::GetMessages(HWND handle)
+void cgl::util::CGLWindow::GetMessages(HWND handle)
 {
 	MSG msg = MSG();
 	while(GetMessage(&msg, handle, 0, 0))
@@ -44,7 +44,7 @@ void cgl::CGLWindow::GetMessages(HWND handle)
 //////////////////////////////////////////////////////////////////////////
 // CGLWindowFromConfig
 // 
-cgl::CGLWindowFromConfig::CGLWindowFromConfig( LPCWSTR title , UINT width, UINT height, WNDPROC messageProc, HINSTANCE instance /*= NULL*/, LPCWSTR cursorName /*= IDC_ARROW */ ) :
+cgl::util::CGLWindowFromConfig::CGLWindowFromConfig( LPCWSTR title , UINT width, UINT height, WNDPROC messageProc, HINSTANCE instance /*= NULL*/, LPCWSTR cursorName /*= IDC_ARROW */ ) :
 	CGLWindow("CGLWindowFromConfig"),
 	m_width(width),
 	m_height(height),
@@ -55,7 +55,7 @@ cgl::CGLWindowFromConfig::CGLWindowFromConfig( LPCWSTR title , UINT width, UINT 
 {
 
 }
-HRESULT cgl::CGLWindowFromConfig::onRestore( )
+HRESULT cgl::util::CGLWindowFromConfig::onRestore( )
 {
 	// create window class
 	WNDCLASSEX wcex;
@@ -105,20 +105,17 @@ HRESULT cgl::CGLWindowFromConfig::onRestore( )
 
 	return S_OK;
 }
-void cgl::CGLWindowFromConfig::onReset( )
+void cgl::util::CGLWindowFromConfig::onReset( )
 {
-	if (get())
-	{
-		UnregisterClassW(m_title, NULL);
-		DestroyWindow(get());
-		set(NULL);
-	}
+	DestroyWindow(get());
+	UnregisterClassW(m_title, NULL);
+	set(NULL);
 }
-cgl::PCGLWindow cgl::CGLWindowFromConfig::Create( LPCWSTR title , UINT width, UINT height, WNDPROC messageProc, HINSTANCE instance /*= NULL*/, LPCWSTR cursorName /*= IDC_ARROW */ )
+cgl::util::PCGLWindow cgl::util::CGLWindowFromConfig::Create( LPCWSTR title , UINT width, UINT height, WNDPROC messageProc, HINSTANCE instance /*= NULL*/, LPCWSTR cursorName /*= IDC_ARROW */ )
 {
-	return PCGLWindow(new CGLWindowFromConfig(title, width, height, messageProc, instance, cursorName));
+	return create(new CGLWindowFromConfig(title, width, height, messageProc, instance, cursorName));
 }
-cgl::CGLWindowFromConfig::~CGLWindowFromConfig()
+cgl::util::CGLWindowFromConfig::~CGLWindowFromConfig()
 {
 	onReset();
 }
@@ -126,25 +123,25 @@ cgl::CGLWindowFromConfig::~CGLWindowFromConfig()
 //////////////////////////////////////////////////////////////////////////
 // CGLWindowFromExisting
 // 
-cgl::CGLWindowFromExisting::CGLWindowFromExisting(HWND window)
+cgl::util::CGLWindowFromExisting::CGLWindowFromExisting(HWND window)
 	: CGLWindow("CGLWindowFromExisting"), m_window(window)
 {
 
 }
-HRESULT cgl::CGLWindowFromExisting::onRestore()
+HRESULT cgl::util::CGLWindowFromExisting::onRestore()
 {
 	set(m_window);
 	return S_OK;
 }
-void cgl::CGLWindowFromExisting::onReset( )
+void cgl::util::CGLWindowFromExisting::onReset( )
 {
 	set(NULL);
 }
-cgl::PCGLWindow cgl::CGLWindowFromExisting::Create( HWND window )
+cgl::util::PCGLWindow cgl::util::CGLWindowFromExisting::Create( HWND window )
 {
-	return PCGLWindow(new CGLWindowFromExisting(window));
+	return create(new CGLWindowFromExisting(window));
 }
-cgl::CGLWindowFromExisting::~CGLWindowFromExisting()
+cgl::util::CGLWindowFromExisting::~CGLWindowFromExisting()
 {
 	onReset();
 }

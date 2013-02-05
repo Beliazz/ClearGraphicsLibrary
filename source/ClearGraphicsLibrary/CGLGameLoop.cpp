@@ -1,11 +1,11 @@
 #include "cgl.h"
 
-cgl::CGLGameLoop::CGLGameLoop( ICGLGameLoopEventHandler* pHandler, HWND window, float updateInterval /*= 1.0f / 60.0f */ ) :
+cgl::time::CGLGameLoop::CGLGameLoop( ICGLGameLoopEventHandler* pHandler, HWND window, float updateInterval /*= 1.0f / 60.0f */ ) :
 	m_pEvtHandler(pHandler), m_fixedFrameRate(updateInterval)
 {
 	m_window = window;
 	m_fullSpeed = false;
-	m_pFrameSmoother = new Smoother<float>(10, updateInterval);
+	m_pFrameSmoother = new CGLSmoother<float>(10, updateInterval);
 	m_quitting = false;
 	m_running = false;
 	m_time = 0.0;
@@ -22,7 +22,7 @@ cgl::CGLGameLoop::CGLGameLoop( ICGLGameLoopEventHandler* pHandler, HWND window, 
 	m_measureDrawTime = true;
 }
 
-void cgl::CGLGameLoop::Run()
+void cgl::time::CGLGameLoop::Run()
 {
 	bool updated = false;
 	bool drawn = false;
@@ -88,7 +88,7 @@ void cgl::CGLGameLoop::Run()
 		// perform a check if its still occluded
 		if (occluded)
 		{
-			HRESULT hResult = mgr()->GetDevice()->GetSwapChain()->Present(0, DXGI_PRESENT_TEST);
+			HRESULT hResult = m_pEvtHandler->OnPresent(true);
 
 			switch ( hResult )
 			{
@@ -116,7 +116,7 @@ void cgl::CGLGameLoop::Run()
 		// present it
 		if (drawn)
 		{
-			HRESULT hResult = mgr()->GetDevice()->GetSwapChain()->Present(0, 0);
+			HRESULT hResult = m_pEvtHandler->OnPresent();
 
 			if(m_measureDrawTime)
 				m_gpuTimer->Stop();
@@ -176,18 +176,18 @@ void cgl::CGLGameLoop::Run()
 	}
 }
 
-void cgl::CGLGameLoop::SetUpdateInterval( float updateInterval )
+void cgl::time::CGLGameLoop::SetUpdateInterval( float updateInterval )
 {
 	m_fixedFrameRate = updateInterval;
-	m_pFrameSmoother = new Smoother<float>(10, updateInterval);
+	m_pFrameSmoother = new CGLSmoother<float>(10, updateInterval);
 }
 
-cgl::CGLGameLoop::~CGLGameLoop()
+cgl::time::CGLGameLoop::~CGLGameLoop()
 {
 	SAFE_DELETE(m_pFrameSmoother);
 }
 
-void cgl::CGLGameLoop::EnableDrawTimeMeasurement( bool enable )
+void cgl::time::CGLGameLoop::EnableDrawTimeMeasurement( bool enable )
 {
 	if (enable != m_measureDrawTime)
 	{

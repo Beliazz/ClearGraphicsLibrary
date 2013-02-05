@@ -1,7 +1,12 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ClearGraphicsLibrary", "ClearGraphicsLibrary\ClearGraphicsLibrary.vcxproj", "{F3F43BE6-7F5B-4A68-BA7D-361938A425E6}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ClearGraphicsLibraryTest", "ClearGraphicsLibraryTest\ClearGraphicsLibraryTest.vcxproj", "{77927F12-86A3-43D4-B43A-BF85990C2702}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F3F43BE6-7F5B-4A68-BA7D-361938A425E6} = {F3F43BE6-7F5B-4A68-BA7D-361938A425E6}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -16,6 +21,12 @@ Global
 		{F3F43BE6-7F5B-4A68-BA7D-361938A425E6}.PCH Debug|Win32.Build.0 = PCH Debug|Win32
 		{F3F43BE6-7F5B-4A68-BA7D-361938A425E6}.Release|Win32.ActiveCfg = Release|Win32
 		{F3F43BE6-7F5B-4A68-BA7D-361938A425E6}.Release|Win32.Build.0 = Release|Win32
+		{77927F12-86A3-43D4-B43A-BF85990C2702}.Debug|Win32.ActiveCfg = Debug|Win32
+		{77927F12-86A3-43D4-B43A-BF85990C2702}.Debug|Win32.Build.0 = Debug|Win32
+		{77927F12-86A3-43D4-B43A-BF85990C2702}.PCH Debug|Win32.ActiveCfg = Debug|Win32
+		{77927F12-86A3-43D4-B43A-BF85990C2702}.PCH Debug|Win32.Build.0 = Debug|Win32
+		{77927F12-86A3-43D4-B43A-BF85990C2702}.Release|Win32.ActiveCfg = Release|Win32
+		{77927F12-86A3-43D4-B43A-BF85990C2702}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

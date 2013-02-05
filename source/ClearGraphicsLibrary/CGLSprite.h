@@ -27,7 +27,7 @@ namespace cgl
 			}
 		};
 
-		class CGL_API CGLSprite : public cgl::CGLManagerConnector
+		class CGL_API CGLSprite : public cgl::core::CGLAccess
 		{
 		private:	
 			float m_x;
@@ -44,15 +44,15 @@ namespace cgl
 
 			XMFLOAT4 m_color;
 
-			cgl::PD3D11BackBuffer m_pBackbuffer;
-			cgl::PD3D11ShaderResourceView m_pShaderResource;
-			cgl::PD3D11RenderTargetView m_pRenderTarget;
-			cgl::PD3D11Resource m_pTexture;
+			cgl::core::PD3D11BackBuffer m_pBackbuffer;
+			cgl::core::PD3D11ShaderResourceView m_pShaderResource;
+			cgl::core::PD3D11RenderTargetView m_pRenderTarget;
+			cgl::core::PD3D11Resource m_pTexture;
 
-			CGLSprite();
+			CGLSprite(cgl::core::PD3D11BackBuffer pBackBuffer);
 
 		public:
-			static PCGLSprite Create();
+			static PCGLSprite Create(cgl::core::PD3D11BackBuffer pBackBuffer);
 
 			void SetX(float x);
 			void SetY(float y);
@@ -66,7 +66,7 @@ namespace cgl
 
 			void SetRotation(float degrees);
 			void AddRotation(float dd);
-			bool SetTexture(cgl::PD3D11Resource pTex);
+			bool SetTexture(cgl::core::PD3D11Resource pTex);
 			void SetColor(XMFLOAT4 color);
 
 			inline float GetX()							{ return m_x; }
@@ -76,12 +76,12 @@ namespace cgl
 			inline float GetRotation()					{ return m_rotation; }
 			inline XMFLOAT4 GetColor()					{ return m_color; }
 
-			inline cgl::PD3D11Resource& GetTexture()					{ return m_pTexture; }
-			inline cgl::PD3D11ShaderResourceView& GetShaderResource()	{ return m_pShaderResource; }
-			inline cgl::PD3D11RenderTargetView& GetRenderTarget()		{ return m_pRenderTarget;}
+			inline cgl::core::PD3D11Resource& GetTexture()					{ return m_pTexture; }
+			inline cgl::core::PD3D11ShaderResourceView& GetShaderResource()	{ return m_pShaderResource; }
+			inline cgl::core::PD3D11RenderTargetView& GetRenderTarget()		{ return m_pRenderTarget;}
 
 			XMFLOAT4X4 GetWorldMatrix();
-			cgl::PD3D11VertexBuffer& GetVertexBuffer();
+			cgl::core::PD3D11VertexBuffer& GetVertexBuffer();
 		};
 	}
 }

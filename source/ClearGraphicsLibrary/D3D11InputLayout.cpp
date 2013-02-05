@@ -2,12 +2,12 @@
 
 //////////////////////////////////////////////////////////////////////////
 // d3d11 input layout from shader
-cgl::CD3D11InputLayout::CD3D11InputLayout( PD3D11EffectPass pPass, ICGLInstancing* pInstancingInfo)
-	: CGLBase("CD3D11InputLayout"), m_pPass(pPass), m_pInstancingInfo(pInstancingInfo), m_vertexSize(0)
+cgl::core::CD3D11InputLayout::CD3D11InputLayout( PD3D11EffectPass pPass, ICGLInstancing* pInstancingInfo)
+	: CGLBase("CD3D11InputLayout"), CGLTypedBindable(this), m_pPass(pPass), m_pInstancingInfo(pInstancingInfo), m_vertexSize(0)
 {
 
 }
-HRESULT cgl::CD3D11InputLayout::onRestore(  )
+HRESULT cgl::core::CD3D11InputLayout::onRestore(  )
 {
 	//////////////////////////////////////////////////////////////////////////
 	// reset
@@ -150,35 +150,30 @@ HRESULT cgl::CD3D11InputLayout::onRestore(  )
 	hResult = m_pPass->get()->GetDesc(&passDesc);
 	if (FAILED(hResult)) return hResult;
 
-	hResult = getDevice()->GetDevice()->CreateInputLayout(pDesc, shaderDesc.NumInputSignatureEntries, passDesc.pIAInputSignature, passDesc.IAInputSignatureSize, ptr());
+	hResult = CGLAccess::D3DDevice()->CreateInputLayout(pDesc, shaderDesc.NumInputSignatureEntries, passDesc.pIAInputSignature, passDesc.IAInputSignatureSize, ptr());
 
 	SAFE_DELETE_ARRAY(pDesc);
 
 	return hResult;
 }
-void cgl::CD3D11InputLayout::onReset()
+void cgl::core::CD3D11InputLayout::onReset()
 {
 	comReset((IUnknown**)ptr());
 }
 
-void cgl::CD3D11InputLayout::getDependencies(std::vector<cgl::PCGLObject>* pDependencies)
+void cgl::core::CD3D11InputLayout::getDependencies(std::vector<cgl::core::PCGLObject>* pDependencies)
 {
 	pDependencies->push_back(m_pPass);
 }
-cgl::PD3D11InputLayout cgl::CD3D11InputLayout::Create( PD3D11EffectPass pPass, ICGLInstancing* pInstancingInfo)
+cgl::core::PD3D11InputLayout cgl::core::CD3D11InputLayout::Create( PD3D11EffectPass pPass, ICGLInstancing* pInstancingInfo)
 {
-	return create<CD3D11InputLayout>(new CD3D11InputLayout(pPass, pInstancingInfo));
+	return create(new CD3D11InputLayout(pPass, pInstancingInfo));
 }
-void cgl::CD3D11InputLayout::Bind()
-{
-	getDevice()->GetContext()->IASetInputLayout(get());
-}
-cgl::CD3D11InputLayout::~CD3D11InputLayout()
+cgl::core::CD3D11InputLayout::~CD3D11InputLayout()
 {
 	m_cglElements.clear();
 }
-
-bool cgl::CD3D11InputLayout::operator==( CD3D11InputLayout& rhs )
+bool cgl::core::CD3D11InputLayout::operator==( CD3D11InputLayout& rhs )
 {
 	if (this->m_cglElements.size() != rhs.m_cglElements.size())
 		return false;
@@ -190,6 +185,11 @@ bool cgl::CD3D11InputLayout::operator==( CD3D11InputLayout& rhs )
 	}
 
 	return false;
+}
+
+void cgl::core::CD3D11InputLayout::bind()
+{
+	CGLAccess::D3DContext()->IASetInputLayout(get());
 }
 
 

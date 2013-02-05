@@ -2,69 +2,49 @@
 
 //////////////////////////////////////////////////////////////////////////
 // cgl manager connector
-cgl::CGLManagerConnector::CGLManagerConnector()
+
+cgl::core::D3DContext cgl::core::CGLAccess::D3DContext()
 {
-	m_pMgr = cgl::CGLManager::GetInstance();
+	ID3D11DeviceContext* pContext = NULL;
+	reinterpret_cast<CD3D11Device*>(CGLManagerBase::GetInstance()->GetDevice().get())->get()->GetImmediateContext(&pContext);
+	return cgl::core::D3DContext(pContext);
+}
+ID3D11Device* cgl::core::CGLAccess::D3DDevice()
+{
+	return reinterpret_cast<CD3D11Device*>(CGLManagerBase::GetInstance()->GetDevice().get())->get();
+}
+cgl::core::CD3D11Device* cgl::core::CGLAccess::CGLDevice()
+{
+	return reinterpret_cast<CD3D11Device*>(CGLManagerBase::GetInstance()->GetDevice().get());
+}
+cgl::core::CGLManagerBase* cgl::core::CGLAccess::CGLMgr()
+{
+	return CGLManagerBase::GetInstance();
 }
 
-ID3D11DeviceContext* cgl::CGLManagerConnector::Context()
-{
-	return m_pMgr->GetDevice()->GetContext();
-}
-
-ID3D11Device* cgl::CGLManagerConnector::Device()
-{
-	return m_pMgr->GetDevice()->GetDevice();
-}
-
-IDXGISwapChain* cgl::CGLManagerConnector::SwapChain()
-{
-	return m_pMgr->GetDevice()->GetSwapChain();
-}
 
 //////////////////////////////////////////////////////////////////////////
 // CGLObject
-UINT cgl::CGLObject::currLUID = 0;
+UINT cgl::core::CGLObject::currLUID = 0;
 
-cgl::CGLObject::CGLObject(std::string className) 
-	: m_name("unnamed"), m_processing(false), m_restored(false), m_luid(CGLObject::currLUID++), m_typeName(className), m_registered(false)
+cgl::core::CGLObject::CGLObject(std::string className) 
+	: m_processing(false), m_restored(false), m_luid(CGLObject::currLUID++), m_typeName(className), m_registered(false), m_name("unnamed")
+{}
+cgl::core::CGLObject::~CGLObject()
 {
-	if (mgr())
-	{
-		mgr()->Notify(CGL_NOTIFICATION_INSTANTIATION, this);
-	}
-	else
-	{
-		CGLLogger::Print("ERROR: no CGLManager instance!");
-	}
-}
-cgl::CGLObject::~CGLObject()
-{
-	if (mgr())
-	{
-		mgr()->Notify(CGL_NOTIFICATION_DESCTRUCTION, this);
-	}
-	else
-	{
-		CGLLogger::Print("WARNING: object destroyed after the CGL Manager had been deleted");
-	}
 }
 
-bool cgl::CGLObject::restoreDbg(std::string file, std::string function, long line)
+bool cgl::core::CGLObject::restore()
 {
-	return mgr()->RestoreDbg(this, file, function, line);
-}
-bool cgl::CGLObject::restore()
-{
-	return mgr()->Restore(this);
+	return CGLAccess::CGLMgr()->Restore(this);
 }
 
-void cgl::CGLObject::reset()
+void cgl::core::CGLObject::reset()
 {
-	mgr()->Reset(this);
+	CGLAccess::CGLMgr()->Reset(this);
 }
 
-void cgl::CGLObject::comReset(IUnknown** ppComPtr )
+void cgl::core::CGLObject::comReset(IUnknown** ppComPtr )
 {
 	if (ppComPtr)
 	{
@@ -73,92 +53,41 @@ void cgl::CGLObject::comReset(IUnknown** ppComPtr )
 			int refCount = (*ppComPtr)->Release();
 			if (refCount > 0)
 			{
-				// CGLLogger::LogObjectState(CGL_NOTIFICATION_COM_INTERFACE_STILL_ALIVE, this, S_OK, &refCount);
+				std::stringstream ss;
+				ss << "interface still alive [ref count = " << refCount << "]";
+				cgl::debug::CGLLogEntry(__FILE__, __LINE__, cgl::debug::CGL_LOG_CATEGORY_WARNING, ss.str().c_str(), this);
+				//_RPT1(0,"still alive", &refCount);
 			}
 
 			(*ppComPtr) = NULL;
 		}
 	}
 }
-std::tr1::shared_ptr<cgl::D3D11Device> cgl::CGLObject::getDevice()
+
+std::string cgl::core::CGLObject::toString(std::string indent)
 {
-	return mgr()->GetDevice();
+	return "to do: call getFeature with CGL_OBJECT_FEATURE_DEBUG";
 }
 
-void cgl::CGLObject::setName( std::string name )
+bool cgl::core::CGLObject::_depends(CGLObject* objectToCheck, CGLObject* possibleDependency )
 {
-	m_name = name;
-}
-std::string cgl::CGLObject::getName()
-{
-	return m_name;
-}
+	if (objectToCheck == possibleDependency)
+		return true;
 
-std::string cgl::CGLObject::toString(std::string indent)
-{
-	char buffer[8192];
-	ZeroMemory(buffer, sizeof(char) * 8192);
+	std::vector<PCGLObject> dependencies;
+	objectToCheck->getDependencies(&dependencies);
+	for (UINT i = 0; i < dependencies.size(); i++)
+	{
+		if(_depends(dependencies[i].get(), possibleDependency))
+			return true;
+	}
 
-	sprintf(buffer,
-			"%s CGLObject\n"
-			"%s {\n"
-			"%s    luid: %i\n"
-			"%s    name: \"%s\"\n"
-			"%s    type: %s\n"
-			"%s	   \n"
-			"%s	last restoration call\n"
-			"%s    {\n"
-			"%s       file: \"%s\"\n"
-			"%s       function: %s\n"
-			"%s       line: %i\n"
-			"%s    }\n"
-			"%s"
-			"%s }\n", 
-			indent.c_str(), 
-			indent.c_str(), 
-			indent.c_str(), m_luid,
-			indent.c_str(), m_name.c_str(), 
-			indent.c_str(), m_typeName.c_str(),
-			indent.c_str(), 
-			indent.c_str(), 
-			indent.c_str(), 
-			indent.c_str(), m_currRestoreFile.c_str(), 
-			indent.c_str(), m_currRestoreFunc.c_str(),
-			indent.c_str(), m_currRestoreLine,
-			indent.c_str(), 
-			toStringSpecific(indent + indent).c_str(),
-			indent.c_str());
-
-	return std::string(buffer);
+	return false;
 }
 
-//////////////////////////////////////////////////////////////////////////
-// CGLPrivateData
-// cgl::CGLPrivateData::CGLPrivateData( CGLObject* pParent, std::string name ) 
-// 	: m_pParent(pParent), m_name(name)
-// {
-// 
-// }
-// cgl::CGLPrivateData::~CGLPrivateData()
-// {
-// 	resetData();
-// }
-// void cgl::CGLPrivateData::setData( void* pData, UINT size )
-// {
-// 	resetData();
-// 	m_data.resize(size);
-// 	memcpy(m_data.data(), pData, size);
-// }
-// void cgl::CGLPrivateData::addData( void* pData, UINT size )
-// {
-// 	m_data.resize(m_data.size() + size);
-// 	memcpy(m_data.data(), pData, size);
-// }
-// void cgl::CGLPrivateData::resetData()
-// {
-// 	m_data.clear();
-// }
-// void cgl::CGLPrivateData::dumpData()
-// {
-// 
-// }
+bool cgl::core::CGLObject::depends( PCGLObject& possibleDependency )
+{
+	return _depends(this, possibleDependency.get());
+}
+
+

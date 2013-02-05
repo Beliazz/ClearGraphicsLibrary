@@ -2,36 +2,36 @@
 
 //////////////////////////////////////////////////////////////////////////
 // d3d11 query
-cgl::CD3D11Query::CD3D11Query( D3D11_QUERY_DESC desc ) : CGLBase("CD3D11Query"), m_desc(desc)
+cgl::core::CD3D11Query::CD3D11Query( D3D11_QUERY_DESC desc ) : CGLBase("CD3D11Query"), m_desc(desc)
 {
 
 }
-HRESULT cgl::CD3D11Query::onRestore()
+HRESULT cgl::core::CD3D11Query::onRestore()
 {
-	return getDevice()->GetDevice()->CreateQuery(&m_desc, ptr());
+	return CGLAccess::D3DDevice()->CreateQuery(&m_desc, ptr());
 }
-void cgl::CD3D11Query::onReset()
+void cgl::core::CD3D11Query::onReset()
 {
 	comReset((IUnknown**)ptr());
 }
-void cgl::CD3D11Query::Begin()
+void cgl::core::CD3D11Query::Begin()
 {
-	getDevice()->GetContext()->Begin(get());
+	CGLAccess::D3DContext()->Begin(get());
 }
-void cgl::CD3D11Query::End()
+void cgl::core::CD3D11Query::End()
 {
-	getDevice()->GetContext()->End(get());
+	CGLAccess::D3DContext()->End(get());
 }
-void cgl::CD3D11Query::GetData( void* pData )
+void cgl::core::CD3D11Query::GetData( void* pData )
 {
-	while(S_OK != getDevice()->GetContext()->GetData(get(), 
-													 pData, 
-													 get()->GetDataSize(),
-													 0))
+	while(S_OK != CGLAccess::D3DContext()->GetData(get(), 
+									 pData, 
+									 get()->GetDataSize(),
+									 0))
 	{  }	
 }
-std::tr1::shared_ptr<cgl::CD3D11Query> cgl::CD3D11Query::Create( D3D11_QUERY_DESC desc )
+std::tr1::shared_ptr<cgl::core::CD3D11Query> cgl::core::CD3D11Query::Create( D3D11_QUERY_DESC desc )
 {
-	return create<CD3D11Query>(new CD3D11Query(desc));
+	return create(new CD3D11Query(desc));
 }
 

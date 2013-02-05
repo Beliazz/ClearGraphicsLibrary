@@ -3,10 +3,9 @@
 using namespace cgl;
 using namespace cgl::drawing;
 
-CGLSprite::CGLSprite()
+CGLSprite::CGLSprite(cgl::core::PD3D11BackBuffer pBackBuffer)
 {
-	m_pBackbuffer = cgl::CD3D11BackBuffer::Create();
-	m_pBackbuffer->restore();
+	m_pBackbuffer = pBackBuffer;
 	m_matUpToDate = false;
 
 	m_x = 0;
@@ -20,9 +19,9 @@ CGLSprite::CGLSprite()
 	m_color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	CD3D11_TEXTURE2D_DESC desc = CD3D11_TEXTURE2D_DESC(DXGI_FORMAT_R8G8B8A8_UNORM, 2, 2, 1, 1, D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE);
-	m_pTexture = cgl::CD3D11Texture2DBlank::Create(desc);
-	m_pShaderResource = cgl::CD3D11ShaderResourceView::Create(m_pTexture);
-	m_pRenderTarget = cgl::CD3D11RenderTargetView::Create(m_pTexture);
+	m_pTexture = cgl::core::CD3D11Texture2DBlank::Create(desc);
+	m_pShaderResource = cgl::core::CD3D11ShaderResourceView::Create(m_pTexture);
+	m_pRenderTarget = cgl::core::CD3D11RenderTargetView::Create(m_pTexture);
 
 	CGL_RESTORE(m_pShaderResource);
 	CGL_RESTORE(m_pRenderTarget);
@@ -30,9 +29,9 @@ CGLSprite::CGLSprite()
 	m_pRenderTarget->Clear(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
-PCGLSprite CGLSprite::Create()
+PCGLSprite CGLSprite::Create(cgl::core::PD3D11BackBuffer pBackBuffer)
 {
-	return PCGLSprite(new CGLSprite());
+	return PCGLSprite(new CGLSprite(pBackBuffer));
 }
 
 void CGLSprite::SetWidth( float w )
@@ -45,7 +44,7 @@ void CGLSprite::SetWidth( float w )
 
 	D3D11_VIEWPORT vp;
 	UINT count = 1;
-	mgr()->GetDevice()->GetContext()->RSGetViewports(&count, &vp);
+	D3DContext()->RSGetViewports(&count, &vp);
 	m_bbWidth = (UINT)vp.Width;
 
 	m_matUpToDate = false;
@@ -61,7 +60,7 @@ void CGLSprite::SetHeight( float h )
 
 	D3D11_VIEWPORT vp;
 	UINT count = 1;
-	mgr()->GetDevice()->GetContext()->RSGetViewports(&count, &vp);
+	D3DContext()->RSGetViewports(&count, &vp);
 	m_bbHeight =  (UINT)vp.Height;
 
 	m_matUpToDate = false;
@@ -112,7 +111,7 @@ XMFLOAT4X4 CGLSprite::GetWorldMatrix()
 
 	D3D11_VIEWPORT vp;
 	UINT count = 1;
-	mgr()->GetDevice()->GetContext()->RSGetViewports(&count, &vp);
+	D3DContext()->RSGetViewports(&count, &vp);
 	m_bbHeight = (UINT)vp.Height;
 	m_bbWidth = (UINT)vp.Width;
 
@@ -140,12 +139,12 @@ void CGLSprite::SetColor( XMFLOAT4 color )
 {
 	m_color = color;
 }
-bool CGLSprite::SetTexture( cgl::PD3D11Resource pTex )
+bool CGLSprite::SetTexture( cgl::core::PD3D11Resource pTex )
 {
 	m_pTexture = pTex;
 
-	m_pShaderResource = cgl::CD3D11ShaderResourceView::Create(pTex);
-	m_pRenderTarget = cgl::CD3D11RenderTargetView::Create(pTex);
+	m_pShaderResource = cgl::core::CD3D11ShaderResourceView::Create(pTex);
+	m_pRenderTarget = cgl::core::CD3D11RenderTargetView::Create(pTex);
 
 	if(!CGL_RESTORE(m_pRenderTarget)||
 		!CGL_RESTORE(m_pShaderResource))

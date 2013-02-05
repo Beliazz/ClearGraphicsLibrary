@@ -1,16 +1,16 @@
 #include "cgl.h"
 
-cgl::CGLInputDataProcessor::CGLInputDataProcessor(PD3D11InputLayout pInputLayout, ICGLInputProcessorDataProvider* pDataProvider, UINT elementCount, UINT step, CGL_PROCESS_MODE mode)
+cgl::util::CGLInputDataProcessor::CGLInputDataProcessor(cgl::core::PD3D11InputLayout pInputLayout, cgl::util::ICGLInputProcessorDataProvider* pDataProvider, UINT elementCount, UINT step, CGL_PROCESS_MODE mode)
 	: m_mode(mode), m_pData(NULL), m_dataSize(0), m_elementSize(0), m_isValid(true), m_pInputLayout(pInputLayout), m_pDataProvider(pDataProvider), m_elementCount(elementCount), m_step(step)
 {
 
 }
-cgl::CGLInputDataProcessor::~CGLInputDataProcessor()
+cgl::util::CGLInputDataProcessor::~CGLInputDataProcessor()
 {
 	SAFE_FREE(m_pData);
 }
 
-char* cgl::CGLInputDataProcessor::Process()
+char* cgl::util::CGLInputDataProcessor::Process()
 {
 	if (!m_pInputLayout || !m_pDataProvider || m_elementCount == 0)
 		return false;
@@ -63,14 +63,13 @@ char* cgl::CGLInputDataProcessor::Process()
 
 	return m_pData;
 }
-bool cgl::CGLInputDataProcessor::isCompatible( PD3D11InputLayout& pLayoutToMatch )
+bool cgl::util::CGLInputDataProcessor::isCompatible( cgl::core::PD3D11InputLayout& pLayoutToMatch )
 {
-	return ( m_pInputLayout.get() == pLayoutToMatch.get());
+	return ( m_pInputLayout.get() == pLayoutToMatch.get()); 
 }
 
-cgl::PCGLInputDataProcessor cgl::CGLInputDataProcessor::Create( PD3D11InputLayout pInputLayout, ICGLInputProcessorDataProvider* pDataProvider, UINT elementCount, UINT step, CGL_PROCESS_MODE mode)
+cgl::util::PCGLInputDataProcessor cgl::util::CGLInputDataProcessor::Create( cgl::core::PD3D11InputLayout pInputLayout, cgl::util::ICGLInputProcessorDataProvider* pDataProvider, UINT elementCount, UINT step, CGL_PROCESS_MODE mode)
 {
 	return PCGLInputDataProcessor(new CGLInputDataProcessor(pInputLayout, pDataProvider, elementCount, step, mode));
 }
-
 

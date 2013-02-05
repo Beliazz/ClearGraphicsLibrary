@@ -2,23 +2,23 @@
 
 //////////////////////////////////////////////////////////////////////////
 // dxgi factory
-cgl::CDXGIFactory::CDXGIFactory() : CGLBase("CD3D11Factory")
+cgl::core::CDXGIFactory::CDXGIFactory() : CGLBase("CD3D11Factory")
 {
 
 }
-HRESULT cgl::CDXGIFactory::onRestore( )
+HRESULT cgl::core::CDXGIFactory::onRestore( )
 {
 	return CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)ptr());
 }
-void cgl::CDXGIFactory::onReset()
+void cgl::core::CDXGIFactory::onReset()
 {
 	comReset((IUnknown**)ptr());
 }
-cgl::PDXGIFactory cgl::CDXGIFactory::Create()
+cgl::core::PDXGIFactory cgl::core::CDXGIFactory::Create()
 {
 	return create<CDXGIFactory>(new CDXGIFactory());
 }
-UINT cgl::CDXGIFactory::GetAdapterCount()
+UINT cgl::core::CDXGIFactory::GetAdapterCount()
 {
 	IDXGIAdapter* pAdapter;
 	UINT count = 0;
@@ -33,28 +33,28 @@ UINT cgl::CDXGIFactory::GetAdapterCount()
 
 //////////////////////////////////////////////////////////////////////////
 // dxgi output
-HRESULT cgl::CDXGIOutput::onRestore()
+HRESULT cgl::core::CDXGIOutput::onRestore()
 {
 	return m_pAdapter->get()->EnumOutputs(m_index, ptr());
 }
-void cgl::CDXGIOutput::onReset()
+void cgl::core::CDXGIOutput::onReset()
 {
 	comReset((IUnknown**)ptr());
 }
-void cgl::CDXGIOutput::getDependencies( std::vector<PCGLObject>* pDependencies )
+void cgl::core::CDXGIOutput::getDependencies( std::vector<PCGLObject>* pDependencies )
 {
 	pDependencies->push_back(m_pAdapter);
 }
-cgl::CDXGIOutput::CDXGIOutput( PDXGIAdapter pAdapter, UINT index )
+cgl::core::CDXGIOutput::CDXGIOutput( PDXGIAdapter pAdapter, UINT index )
 	: CGLBase("CDXGIOutput"), m_pAdapter(pAdapter), m_index(index)
 {
 
 }
-cgl::PDXGIOutput cgl::CDXGIOutput::Create( PDXGIAdapter pAdapter, UINT index )
+cgl::core::PDXGIOutput cgl::core::CDXGIOutput::Create( PDXGIAdapter pAdapter, UINT index )
 {
-	return create<CDXGIOutput>(new CDXGIOutput(pAdapter, index));
+	return create(new CDXGIOutput(pAdapter, index));
 }
-std::vector<DXGI_MODE_DESC> cgl::CDXGIOutput::GetFormats()
+std::vector<DXGI_MODE_DESC> cgl::core::CDXGIOutput::GetFormats()
 {
 	std::vector<DXGI_MODE_DESC> descs;
 
@@ -80,28 +80,28 @@ std::vector<DXGI_MODE_DESC> cgl::CDXGIOutput::GetFormats()
 
 //////////////////////////////////////////////////////////////////////////
 // dxgi adapter
-void cgl::CDXGIAdapter::onReset()
+void cgl::core::CDXGIAdapter::onReset()
 {
 	comReset((IUnknown**)ptr());
 }
-HRESULT cgl::CDXGIAdapter::onRestore()
+HRESULT cgl::core::CDXGIAdapter::onRestore()
 {
 	return m_pFactory->get()->EnumAdapters(m_index, ptr());
 }
-void cgl::CDXGIAdapter::getDependencies( std::vector<PCGLObject>* pDependencies )
+void cgl::core::CDXGIAdapter::getDependencies( std::vector<PCGLObject>* pDependencies )
 {
 	pDependencies->push_back(m_pFactory);
 }
-cgl::CDXGIAdapter::CDXGIAdapter( PDXGIFactory pFactory, UINT index )
-	: CGLBase("CDXGIOutput"), m_pFactory(pFactory), m_index(index)
+cgl::core::CDXGIAdapter::CDXGIAdapter( PDXGIFactory pFactory, UINT index )
+	: CGLBase("CDXGIAdapter"), m_pFactory(pFactory), m_index(index)
 {
 
 }
-cgl::PDXGIAdapter cgl::CDXGIAdapter::Create( PDXGIFactory pFactory, UINT index )
+cgl::core::PDXGIAdapter cgl::core::CDXGIAdapter::Create( PDXGIFactory pFactory, UINT index )
 {
-	return create<CDXGIAdapter>(new CDXGIAdapter(pFactory, index));
+	return create(new CDXGIAdapter(pFactory, index));
 }
-UINT cgl::CDXGIAdapter::GetOutputCount()
+UINT cgl::core::CDXGIAdapter::GetOutputCount()
 {
 	IDXGIOutput* pOutput;
 	UINT count = 0;
@@ -116,7 +116,7 @@ UINT cgl::CDXGIAdapter::GetOutputCount()
 
 //////////////////////////////////////////////////////////////////////////
 // get format size in bytes
-UINT CGL_API cgl::GetFormatSize( DXGI_FORMAT format )
+UINT CGL_API cgl::core::GetFormatSize( DXGI_FORMAT format )
 {
 	switch(format)
 	{

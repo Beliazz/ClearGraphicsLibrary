@@ -5,86 +5,115 @@
 
 namespace cgl
 {
+	namespace core
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// rasterizer state
+		class CGL_API CGLRasterizerStateBindable : public CGLTypedBindable<ID3D11RasterizerState>
+		{
+		private:
 
-//////////////////////////////////////////////////////////////////////////
-// rasterizer state
-class CGL_API CD3D11RasterizerState : public CGLBase<ID3D11RasterizerState>
-{
-private:
-	D3D11_RASTERIZER_DESC m_desc;
+		protected:
+			void bind();
+			inline CGL_BIND getBind() { return CGL_BIND_RASTERIZER_STATE; }
 
-protected:
-	CD3D11RasterizerState(D3D11_RASTERIZER_DESC desc);
-	HRESULT onRestore();
-	void onReset();
-	void getDependencies(std::vector<PCGLObject>* pDependencies ) { }
-	inline bool checkDependency() { return true; }
+		public:
+			CGLRasterizerStateBindable(CGLBase<ID3D11RasterizerState>* pRasterizerState) 
+				: CGLTypedBindable(pRasterizerState) { }
+		};
+		class CGL_API CD3D11RasterizerState : public CGLBase<ID3D11RasterizerState>
+		{
+		private:
+			D3D11_RASTERIZER_DESC m_desc;
 
-public:
-	static std::tr1::shared_ptr<CD3D11RasterizerState> Create(D3D11_RASTERIZER_DESC desc);
+		protected:
+			CD3D11RasterizerState(D3D11_RASTERIZER_DESC desc);
+			HRESULT onRestore();
+			void onReset();
+			void getDependencies(std::vector<PCGLObject>* pDependencies ) { }
+			inline bool checkDependency() { return true; }
 
-	void Bind();
-};
+		public:
+			static std::tr1::shared_ptr<CD3D11RasterizerState> Create(D3D11_RASTERIZER_DESC desc);
 
-//////////////////////////////////////////////////////////////////////////
-// blend state
-//////////////////////////////////////////////////////////////////////////
-class CGL_API CD3D11BlendState : public CGLBase<ID3D11BlendState>
-{
-private:
-	D3D11_BLEND_DESC m_desc;
-	float m_stdBlendFactor[4];
-	UINT  m_stdSampleMask;
+			void Bind();
+		};
 
-protected:
-	HRESULT onRestore();
-	void onReset();
-	void getDependencies(std::vector<PCGLObject>* pDependencies ) { }
-	inline bool checkDependency() { return true; }
-	CD3D11BlendState(D3D11_BLEND_DESC desc, const float stdBlendFactor[4], UINT stdSampleMask);
+		//////////////////////////////////////////////////////////////////////////
+		// blend state
+		//////////////////////////////////////////////////////////////////////////
+		class CGL_API CGLBlendStateBindable : public CGLTypedBindable<ID3D11BlendState>
+		{
+		protected:
+			void bind();
+			inline CGL_BIND getBind() { return CGL_BIND_BLEND_STATE; }
 
-public:
-	static std::tr1::shared_ptr<CD3D11BlendState> Create(D3D11_BLEND_DESC desc, const float stdBlendFactor[4], UINT stdSampleMask);
+		public:
+			CGLBlendStateBindable(CGLBase<ID3D11BlendState>* pRasterizerState) 
+				: CGLTypedBindable(pRasterizerState) { }
 
-	// bind with std parameter
-	void Bind();
+			enum BIND_PARAM
+			{
+				BIND_PARAM_BLEND_FACTOR_FLOAT4,
+				BIND_PARAM_SAMPLE_MASK_UINT
+			};
+		};
+		class CGL_API CD3D11BlendState : public CGLBase<ID3D11BlendState>
+		{
+		private:
+			D3D11_BLEND_DESC m_desc;
+			float m_stdBlendFactor[4];
+			UINT  m_stdSampleMask;
 
-	// bind with other parameter
-	void Bind(float stdBlendFactor[4], UINT stdSampleMask);
+		protected:
+			HRESULT onRestore();
+			void onReset();
+			void getDependencies(std::vector<PCGLObject>* pDependencies ) { }
+			inline bool checkDependency() { return true; }
+			CD3D11BlendState(D3D11_BLEND_DESC desc, const float stdBlendFactor[4], UINT stdSampleMask);
 
-};
+		public:
+			static std::tr1::shared_ptr<CD3D11BlendState> Create(D3D11_BLEND_DESC desc, const float stdBlendFactor[4], UINT stdSampleMask);
 
-//////////////////////////////////////////////////////////////////////////
-// depth stencil state
-//////////////////////////////////////////////////////////////////////////
-class CGL_API CD3D11DepthStencilState : public CGLBase<ID3D11DepthStencilState>
-{
-private:
-	D3D11_DEPTH_STENCIL_DESC	m_desc;
-	UINT8 m_stdStencilRef;
+			// bind with std parameter
+			void Bind();
 
-protected:
-	HRESULT onRestore();
-	void onReset();
-	void getDependencies(std::vector<PCGLObject>* pDependencies ) { }
-	CD3D11DepthStencilState(D3D11_DEPTH_STENCIL_DESC desc, UINT8 stdStencilRef);
+			// bind with other parameter
+			void Bind(float stdBlendFactor[4], UINT stdSampleMask);
 
-public:
-	static std::tr1::shared_ptr<CD3D11DepthStencilState> Create(D3D11_DEPTH_STENCIL_DESC desc, UINT8 stdStencilRef);
+		};
 
-	// bind with std parameter
-	void Bind();
+		//////////////////////////////////////////////////////////////////////////
+		// depth stencil state
+		//////////////////////////////////////////////////////////////////////////
+		class CGL_API CD3D11DepthStencilState : public CGLBase<ID3D11DepthStencilState>
+		{
+		private:
+			D3D11_DEPTH_STENCIL_DESC	m_desc;
+			UINT8 m_stdStencilRef;
 
-	// bind with other parameter
-	void Bind(UINT8 stencilRef);
-};
+		protected:
+			HRESULT onRestore();
+			void onReset();
+			void getDependencies(std::vector<PCGLObject>* pDependencies ) { }
+			CD3D11DepthStencilState(D3D11_DEPTH_STENCIL_DESC desc, UINT8 stdStencilRef);
 
-//////////////////////////////////////////////////////////////////////////
-// typedefs
-typedef CGL_API std::tr1::shared_ptr<CD3D11RasterizerState> PD3D11RasterizerState;
-typedef CGL_API std::tr1::shared_ptr<CD3D11BlendState> PD3D11BlendState;
-typedef CGL_API std::tr1::shared_ptr<CD3D11DepthStencilState> PD3D11DepthStencilState;
+		public:
+			static std::tr1::shared_ptr<CD3D11DepthStencilState> Create(D3D11_DEPTH_STENCIL_DESC desc, UINT8 stdStencilRef);
 
+			// bind with std parameter
+			void Bind();
+
+			// bind with other parameter
+			void Bind(UINT8 stencilRef);
+		};
+
+		//////////////////////////////////////////////////////////////////////////
+		// typedefs
+		typedef CGL_API std::tr1::shared_ptr<CD3D11RasterizerState> PD3D11RasterizerState;
+		typedef CGL_API std::tr1::shared_ptr<CD3D11BlendState> PD3D11BlendState;
+		typedef CGL_API std::tr1::shared_ptr<CD3D11DepthStencilState> PD3D11DepthStencilState;
+	}
 }
 
 #endif // D3D11RenderStates_h__

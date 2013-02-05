@@ -18,7 +18,7 @@
 #define SAFE_DELETE_ARRAY(x)	if(x){delete[] x; x = NULL;}
 #define SAFE_FREE(x)			if(x){free(x); x = NULL;}
 
-#define WIN32_LEAN_AND_MEAN
+//#define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <WindowsX.h>
 
@@ -40,6 +40,7 @@
 #include <d3dx11effect.h>
 #include <DxErr.h>
 #include <D3Dcompiler.h>
+#pragma comment(lib, "winmm.lib")
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d3dx11.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -47,33 +48,46 @@
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "effects11.lib")
 
-#include "CGLObject.h"
-#include "CGLInstancing.h"
-#include "CGLDataProvider.h"
-#include "CGLBindable.h"
+#include "CGLLog.h"
 
-#include "CGLInputProcessor.h"
-#include "CGLLogger.h"
+#include "CGLManagerBase.h"
+#include "CGLManager.h"
+#include "CGLManagerDbg.h"
+#include "CGLObject.h"
+#include "CGLBindable.h"
+#include "CGLBindCollection.h"
 #include "CGLWindow.h"
 
 #include "DXGIFactory.h"
+#include "DXGISwapChain.h"
+
 #include "D3D11Device.h"
 #include "D3D11Effect.h"
 #include "D3D11InputLayout.h"
 #include "D3D11Buffer.h"
-#include "D3D11InputBuffer.h"
 #include "D3D11RenderStates.h"
 #include "D3D11Texture.h"
 #include "D3D11ResourceView.h"
 #include "D3D11Query.h"
 
+#include "CGLInputProcessor.h"
+#include "CGLInputBuffer.h"
+#include "CGLLogger.h"
+
+
+#include "CGLSmoother.h"
 #include "CGLTimer.h"
 #include "CGLGameLoop.h"
-#include "CGLBindCollection.h"
-#include "CGLManager.h"
 
 #include "CGLSprite.h"
 #include "CGLSpriteBatch.h"
 #include "CGLLabel.h"
+#include "CGLMesh.h"
+
+namespace cgl
+{
+	cgl::core::PCGLManager CGL_API CGLCreate(bool debug);
+}
+
 
 #endif // cgl_h__

@@ -3,59 +3,83 @@
 
 #include "cgl.h"
 
-namespace cgl {
-
-//////////////////////////////////////////////////////////////////////////
-// typedef
-class CGLInputDataProcessor;
-typedef CGL_API std::tr1::shared_ptr<CGLInputDataProcessor>	PCGLInputDataProcessor;
-
-//////////////////////////////////////////////////////////////////////////
-// data processor
-// 
-enum CGL_PROCESS_MODE
+namespace cgl 
 {
-	CGL_PROCESS_MODE_PER_ELEMENT,
-	CGL_PROCESS_MODE_PER_SUB_ELEMENT,
-};
+	namespace util
+	{
+		//////////////////////////////////////////////////////////////////////////
+		// typedef
+		class CGLInputDataProcessor;
+		typedef CGL_API std::tr1::shared_ptr<CGLInputDataProcessor>	PCGLInputDataProcessor;
 
-class CGL_API CGLInputDataProcessor : public ICGLInputBufferDataProvider	
-{	
-private:
-	CGL_PROCESS_MODE m_mode;
+		//////////////////////////////////////////////////////////////////////////
+		// cgl input buffer data provider
+		__interface CGL_API ICGLInputBufferDataProvider	
+		{
+			UINT getElementCount();
+			UINT getDataSize();
+			UINT getElementSize();
+			char* getData();
+			bool isCompatible(cgl::core::PD3D11InputLayout& pLayoutToMatch);
+			bool isValid();
+			void invalidate();
+			void deleteData();
+		};
 
-	PD3D11InputLayout m_pInputLayout;
-	ICGLInputProcessorDataProvider* m_pDataProvider;
+		//////////////////////////////////////////////////////////////////////////
+		// cgl input factory data provider
+		__interface CGL_API ICGLInputProcessorDataProvider
+		{
+			bool getElement(char* pDest, UINT elementIndex, cgl::core::CGL_INPUT_ELEMENT_SIGNATURE* inputElementSignature, UINT inputElementCount  );
+			bool isCompatible(std::vector<cgl::core::CGL_INPUT_ELEMENT_SIGNATURE>& pRequiredElements);	
+		};
 
-	char* m_pData;
-	UINT m_dataSize;
-	UINT m_elementSize;
-	UINT m_elementCount;
-	UINT m_step;
-	std::vector<CGL_INPUT_ELEMENT_SIGNATURE> m_currElements;
-	bool m_isValid;
+		//////////////////////////////////////////////////////////////////////////
+		// cgl input data process mode
+		enum CGL_PROCESS_MODE
+		{
+			CGL_PROCESS_MODE_PER_ELEMENT,
+			CGL_PROCESS_MODE_PER_SUB_ELEMENT,
+		};
 
-	char* Process();	
+		//////////////////////////////////////////////////////////////////////////
+		// cgl input data processor
+		class CGL_API CGLInputDataProcessor : public cgl::util::ICGLInputBufferDataProvider	
+		{	
+		private:
+			CGL_PROCESS_MODE m_mode;
 
-	CGLInputDataProcessor(PD3D11InputLayout pInputLayout, ICGLInputProcessorDataProvider* pDataProvider, UINT elementCount, UINT step = 1, CGL_PROCESS_MODE mode = CGL_PROCESS_MODE_PER_SUB_ELEMENT);
-	CGLInputDataProcessor operator =(const CGLInputDataProcessor &);
+			cgl::core::PD3D11InputLayout m_pInputLayout;
+			cgl::util::ICGLInputProcessorDataProvider* m_pDataProvider;
 
-public:	
-	static PCGLInputDataProcessor Create(PD3D11InputLayout pInputLayout, ICGLInputProcessorDataProvider* pDataProvider, UINT elementCount, UINT step = 1, CGL_PROCESS_MODE mode = CGL_PROCESS_MODE_PER_SUB_ELEMENT);
-	~CGLInputDataProcessor();
+			char* m_pData;
+			UINT m_dataSize;
+			UINT m_elementSize;
+			UINT m_elementCount;
+			UINT m_step;
+			std::vector<cgl::core::CGL_INPUT_ELEMENT_SIGNATURE> m_currElements;
+			bool m_isValid;
 
-	inline UINT getElementCount()	{ return m_dataSize / m_elementSize; }
-	inline UINT getDataSize()		{ return m_dataSize; }
-	inline UINT getElementSize()	{ return m_elementSize; }
-	inline char* getData()			{ return Process(); }
-	inline bool isValid()			{ return m_isValid; }
-	inline void invalidate()		{ m_isValid = false; }
-	inline void deleteData()		{ SAFE_FREE(m_pData); }
+			char* Process();	
 
-	bool isCompatible(PD3D11InputLayout& pLayoutToMatch);
-	
-};
+			CGLInputDataProcessor(cgl::core::PD3D11InputLayout pInputLayout, cgl::util::ICGLInputProcessorDataProvider* pDataProvider, UINT elementCount, UINT step = 1, CGL_PROCESS_MODE mode = CGL_PROCESS_MODE_PER_SUB_ELEMENT);
+			CGLInputDataProcessor operator =(const CGLInputDataProcessor &);
 
+		public:	
+			static PCGLInputDataProcessor Create(cgl::core::PD3D11InputLayout pInputLayout, cgl::util::ICGLInputProcessorDataProvider* pDataProvider, UINT elementCount, UINT step = 1, CGL_PROCESS_MODE mode = CGL_PROCESS_MODE_PER_SUB_ELEMENT);
+			~CGLInputDataProcessor();
+
+			inline UINT getElementCount()	{ return m_dataSize / m_elementSize; }
+			inline UINT getDataSize()		{ return m_dataSize; }
+			inline UINT getElementSize()	{ return m_elementSize; }
+			inline char* getData()			{ return Process(); }
+			inline bool isValid()			{ return m_isValid; }
+			inline void invalidate()		{ m_isValid = false; }
+			inline void deleteData()		{ SAFE_FREE(m_pData); }
+
+			bool isCompatible(cgl::core::PD3D11InputLayout& pLayoutToMatch);
+		};
+	}
 }
 
 #endif // CGLInputProcessor_h__
