@@ -18,7 +18,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>Windows7.1SDK</PlatformToolset>
+    <PlatformToolset>v100</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -41,6 +41,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(DXSDK_DIR)\Samples\C++\Effects11\Inc;$(DXSDK_DIR)\Include;$(CGL_HOME)\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(DXSDK_DIR)\Samples\C++\Effects11\$(Configuration);$(DXSDK_DIR)\lib\x86\;$(CGL_HOME)\lib\$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <OutDir>Output</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -51,12 +52,27 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>robocopy $(OutDir) "$(CGL_HOME)\bin\$(Configuration)" ".exe"
+if errorlevel 4 goto BuildEventFailed
+if errorlevel 0 goto end
+:BuildEventFailed echo FILECOPY for $(ProjectName) FAILED
+exit 1
+:end echo FILECOPY for $(ProjectName) COMPLETED OK
+exit 0</Command>
     </PostBuildEvent>
     <PreLinkEvent>
-      <Command>copy "$(CGL_HOME)\bin\$(Configuration)\ClearGraphicsLibrary.dll" "ClearGraphicsLibrary.dll"</Command>
+      <Command>
+      </Command>
     </PreLinkEvent>
+    <PreBuildEvent>
+      <Command>robocopy $(OutDir) "$(CGL_HOME)\bin\$(Configuration)" "*.exe"
+if errorlevel 4 goto BuildEventFailed
+if errorlevel 0 goto end
+:BuildEventFailed echo FILECOPY for $(ProjectName) FAILED
+exit 1
+:end echo FILECOPY for $(ProjectName) COMPLETED OK
+exit 0</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>

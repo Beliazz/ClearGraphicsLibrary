@@ -37,7 +37,7 @@
 #include <d3d11.h>
 #include <DXGI.h>	
 #include <D3DX11.h>
-#include <d3dx11effect.h>
+#include <..\Samples\C++\Effects11\Inc\d3dx11effect.h>
 #include <DxErr.h>
 #include <D3Dcompiler.h>
 #pragma comment(lib, "winmm.lib")

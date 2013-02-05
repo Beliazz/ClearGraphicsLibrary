@@ -26,7 +26,7 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>Windows7.1SDK</PlatformToolset>
+    <PlatformToolset>v100</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='PCH Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -56,9 +56,9 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(DXSDK_DIR)\Include;$(DXSDK_DIR)\Samples\C++\Effects11\Inc;$(IncludePath)</IncludePath>
+    <IncludePath>$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
     <LibraryPath>$(DXSDK_DIR)\Lib\x86;$(DXSDK_DIR)\Samples\C++\Effects11\Debug;$(LibraryPath)</LibraryPath>
-    <OutDir>$(ProjectDir)\$(Configuration)\</OutDir>
+    <OutDir>Output</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='PCH Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -85,11 +85,15 @@
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>robocopy $(OutDir) $(CGL_HOME)\bin\$(Configuration)\ "*.dll" /PURGE
-robocopy $(OutDir) $(CGL_HOME)\lib\$(Configuration)\ "*.lib" /PURGE
-
-robocopy $(ProjectDir) $(CGL_HOME)\include "*.h" /PURGE /XD "$(OutDir)"
-if errorlevel 1 GOTO :eof</Command>
+      <Command>robocopy $(OutDir) "$(CGL_HOME)\bin\$(Configuration)" "*.dll"
+robocopy $(OutDir) "$(CGL_HOME)\lib\$(Configuration)" "*.lib"
+robocopy .\  "$(CGL_HOME)\include" "*.h"
+if errorlevel 4 goto BuildEventFailed
+if errorlevel 0 goto end
+:BuildEventFailed echo FILECOPY for $(ProjectName) FAILED
+exit 1
+:end echo FILECOPY for $(ProjectName) COMPLETED OK
+exit 0</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='PCH Debug|Win32'">
