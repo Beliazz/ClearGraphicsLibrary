@@ -42,6 +42,9 @@ local.properties
 *.sln.docstates
 *.vcxproj
 *.dll
+*.lib
+*.exe
+*.exp
 
 # Build results
 [Dd]ebug/
