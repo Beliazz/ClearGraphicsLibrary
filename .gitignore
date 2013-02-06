@@ -45,6 +45,7 @@ local.properties
 *.lib
 *.exe
 *.exp
+*.dia.autosave
 
 # Build results
 [Dd]ebug/

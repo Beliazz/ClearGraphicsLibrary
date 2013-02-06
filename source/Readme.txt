@@ -5,7 +5,7 @@
 
 <ol>
 	<li>checkout from github</li>
-	<li>fire up visual studio 2010
+	<li>fire up visual studio
 	<li>add include and library paths for both directX and
    	    the effect library (DirectXDir\samples\c++\effects11)</li>
 	<li>build</li>

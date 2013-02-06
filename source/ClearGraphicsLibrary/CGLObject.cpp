@@ -39,7 +39,6 @@ bool cgl::core::CGLObject::restore()
 {
 	return CGLAccess::CGLMgr()->Restore(this);
 }
-
 void cgl::core::CGLObject::reset()
 {
 	CGLAccess::CGLMgr()->Reset(this);

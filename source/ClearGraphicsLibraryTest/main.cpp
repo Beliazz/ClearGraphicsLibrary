@@ -74,6 +74,8 @@ int WINAPI WinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 		}
 	}
 
+	pMgr.reset();
+
 	return 0;
 }
 

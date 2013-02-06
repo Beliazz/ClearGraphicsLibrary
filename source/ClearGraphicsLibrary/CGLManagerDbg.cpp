@@ -19,6 +19,7 @@ cgl::debug::CGLManagerDbg::~CGLManagerDbg()
 	// notify application
 	// 
 	// check device
+	// 
 	Tidy();
 	
 	if (GetDevice().use_count() > 1)
@@ -38,7 +39,6 @@ cgl::debug::CGLManagerDbg::~CGLManagerDbg()
 			Unregister(*it);
 		}
 
-		pDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
 		pDebug->Release();
 	}
 	else
