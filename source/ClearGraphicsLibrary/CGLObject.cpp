@@ -1,9 +1,8 @@
 #include "cgl.h"
 
 //////////////////////////////////////////////////////////////////////////
-// cgl manager connector
-
-cgl::core::CUnknown<ID3D11DeviceContext> cgl::core::CGLAccess::D3DContext()
+// cgl access
+cgl::core::ComPtr<ID3D11DeviceContext> cgl::core::CGLAccess::D3DContext()
 {
 	ID3D11DeviceContext* pContext = NULL;
 	reinterpret_cast<CD3D11Device*>(CGLManagerBase::GetInstance()->GetDevice().get())->get()->GetImmediateContext(&pContext);
@@ -63,30 +62,5 @@ void cgl::core::CGLObject::comReset(IUnknown** ppComPtr )
 	}
 }
 
-std::string cgl::core::CGLObject::toString(std::string indent)
-{
-	return "to do: call getFeature with CGL_OBJECT_FEATURE_DEBUG";
-}
-
-bool cgl::core::CGLObject::_depends(CGLObject* objectToCheck, CGLObject* possibleDependency )
-{
-	if (objectToCheck == possibleDependency)
-		return true;
-
-	std::vector<PCGLObject> dependencies;
-	objectToCheck->getDependencies(&dependencies);
-	for (UINT i = 0; i < dependencies.size(); i++)
-	{
-		if(_depends(dependencies[i].get(), possibleDependency))
-			return true;
-	}
-
-	return false;
-}
-
-bool cgl::core::CGLObject::depends( PCGLObject& possibleDependency )
-{
-	return _depends(this, possibleDependency.get());
-}
 
 

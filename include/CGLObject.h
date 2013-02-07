@@ -19,18 +19,18 @@ namespace cgl
 		};
 
 		template <class T>
-		struct CUnknown
+		struct ComPtr
 		{
 		private:
 			T* m_pIUnknown;
 
 		public:
-			CUnknown(T* pContext) : m_pIUnknown(pContext) { }
-			CUnknown(CUnknown& rhs) : m_pIUnknown(rhs.m_pIUnknown)
+			ComPtr(T* ptr) : m_pIUnknown(ptr) { }
+			ComPtr(ComPtr& rhs) : m_pIUnknown(rhs.m_pIUnknown)
 			{
 				m_pIUnknown->AddRef();
 			}
-			~CUnknown() { m_pIUnknown->Release(); }
+			~ComPtr() { m_pIUnknown->Release(); }
 
 			inline T* operator ->() { return m_pIUnknown; }
 			inline T* operator  *() { return m_pIUnknown; }
@@ -43,24 +43,19 @@ namespace cgl
 		class CGL_API CGLAccess
 		{
 		public:
-			static CGLManagerBase*					CGLMgr();
-			static CD3D11Device*					CGLDevice();
-			static CUnknown<ID3D11DeviceContext>	D3DContext();
-			static ID3D11Device* 					D3DDevice();
+			static CGLManagerBase*				CGLMgr();
+			static CD3D11Device*				CGLDevice();
+			static ComPtr<ID3D11DeviceContext>	D3DContext();
+			static ID3D11Device* 				D3DDevice();
 		};
 
 		//////////////////////////////////////////////////////////////////////////
 		// cgl base class 
-		class CD3D11Device;
 		class CGL_API CGLObject
 		{
 		friend class CGLManagerBase;
 		friend class CGLManager;
 		friend class cgl::debug::CGLManagerDbg;
-		friend class CGLLogger;
-
-		template <class T>
-		friend class CGLTypedBindable;
 
 		private:
 			UINT m_luid;
@@ -87,15 +82,11 @@ namespace cgl
 			void comReset(IUnknown** ppComPtr);
 
 			template <class T>
-			static std::tr1::shared_ptr<typename T> create(T* pInstanceData);
+			static std::tr1::shared_ptr<T> create(T* pInstanceData);
 		
 			virtual HRESULT onRestore() PURE;
 			virtual void onReset() PURE;
 			virtual void getDependencies(std::vector<PCGLObject>* pDependencies ) PURE;
-	
-			virtual std::string toStringSpecific(std::string indent) { return ""; }
-
-			bool _depends(CGLObject* objectToCheck, CGLObject* possibleDependency);
 
 		public:
 			inline UINT getLuid()				{ return m_luid; }
@@ -106,10 +97,6 @@ namespace cgl
 			bool restore();
 			void reset();
 
-			std::string toString(std::string indent = "");
-
-			bool depends(PCGLObject& possibleDependency);
-	
 			inline void setName(std::string name) { m_name = name; }
 			inline std::string getName() { return m_name; }
 

@@ -32,7 +32,7 @@ namespace cgl
 			void getDependencies(std::vector<PCGLObject>* pDependencies );
 
 		public:
-			static PD3D11Device Create(PDXGIAdapter pAdapter, UINT flags);
+			static PD3D11Device Create(PDXGIAdapter pAdapter, UINT flags = 0);
 
 			void Bind(CGLBindable* pBindable);
 

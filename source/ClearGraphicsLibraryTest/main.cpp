@@ -14,8 +14,6 @@ int WINAPI WinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 		// create window
 		cgl::util::PCGLWindow pWindow = cgl::util::CGLWindowFromConfig::Create(L"Test", 640, 480, DefWindowProc);
 		CGLTraceObj(pWindow);
-		if(!pWindow->restore())
-			return 1;
 
 		// create dxgi factory
 		cgl::core::PDXGIFactory pFactory = cgl::core::CDXGIFactory::Create();
@@ -28,13 +26,6 @@ int WINAPI WinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 		// get adapter outputs
 		cgl::core::PDXGIOutput pOutput= cgl::core::CDXGIOutput::Create(pAdapter, 0);
 		CGLTraceObj(pOutput);
-		if(!pOutput->restore())
-			return 4;
-
-		// get output formats
-		std::vector<DXGI_MODE_DESC> formats = pOutput->GetFormats();
-		if(formats.empty())
-			return 5;
 
 		// create device
 		cgl::core::PD3D11Device pDevice = cgl::core::CD3D11Device::Create(pAdapter, D3D11_CREATE_DEVICE_FLAG::D3D11_CREATE_DEVICE_DEBUG);
@@ -44,31 +35,24 @@ int WINAPI WinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 		CGLTraceObj(pDevice);
 
 		// create swap chain
-		cgl::core::PDXGISwapChain pSwapChain = cgl::core::CDXGISwapChain::Create(pWindow, pOutput, cgl::core::CGLSwapChainDesc(formats.size()-1));
+		cgl::core::PDXGISwapChain pSwapChain = cgl::core::CDXGISwapChain::Create(pWindow, pOutput, cgl::core::CGLSwapChainDesc(0));
 		CGLTraceObj(pSwapChain);
-		if(!pSwapChain->restore())
-			return 7;
 
 		// get back buffer
 		cgl::core::PD3D11BackBuffer pBackBuffer = cgl::core::CD3D11BackBuffer::Create(pSwapChain);
 		CGLTraceObj(pBackBuffer);
-		if(!pBackBuffer->restore())
-			return 8;
 
  		// get back buffer render target
 		cgl::core::PD3D11RenderTargetView pBackBufferRTV = cgl::core::CD3D11RenderTargetView::Create(pBackBuffer);
 		CGLTraceObj(pBackBufferRTV);
-		if(!pBackBufferRTV->restore())
-			return 9;
  
- 		pBackBufferRTV->Clear();
+		pMgr->Reset();
+		if(!pMgr->Restore())
+			return -1;
 
-// 		pMgr->Reset();
-// 		if(!pMgr->Restore())
-// 			return -1;
-
+		pBackBufferRTV->Clear(0,0.5f,1,1);
 		while(IsWindowEnabled(pWindow->get()))
-		{
+		{ 		
 			cgl::util::CGLWindow::PeekMessages(pWindow->get());
 			pSwapChain->get()->Present(0, 0);
 		}
